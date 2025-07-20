@@ -160,11 +160,7 @@ export async function generateVideo(
 
 /**
  * Checks the status of a job and returns the video URL when completed
- * I want to implement socket io if status of paticular JobId changes then it will send the video url 
- * to the client 
  */
- 
-
 
 export async function RawVideo(jobId: string): Promise<JobStatusResponse> {
   const params = new URLSearchParams({
