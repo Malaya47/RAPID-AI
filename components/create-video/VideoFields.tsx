@@ -79,8 +79,6 @@ export default function VideoFields({
   const displayedVoices = showAllVoices ? voices : voices.slice(0, 2);
 
   const handleVoiceChange = async (voiceOption: VoiceOption) => {
-    console.log("Selected voice:", voiceOption);
-
     if (setVoice) setVoice(voiceOption);
 
     try {
