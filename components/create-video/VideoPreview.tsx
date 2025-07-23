@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import { JSX } from "react"
-import { Button } from "@/components/ui/button"
-import { Download, Loader2, RotateCcw } from "lucide-react"
+import { JSX } from "react";
+import { Button } from "@/components/ui/button";
+import { Download, Loader2, RotateCcw } from "lucide-react";
 
 interface VideoPreviewProps {
-  download: string
-  videoUrl: string
-  generated: boolean
-  loading: boolean
-  onRegenerate: () => void
-  isRawVideo?: boolean
-  isCaptioning?: boolean
+  download: string;
+  videoUrl: string;
+  generated: boolean;
+  loading: boolean;
+  onRegenerate: () => void;
+  isRawVideo?: boolean;
+  isCaptioning?: boolean;
 }
 
 export default function VideoPreview({
@@ -21,7 +21,7 @@ export default function VideoPreview({
   loading,
   onRegenerate,
   isRawVideo = false,
-  isCaptioning = false
+  isCaptioning = false,
 }: VideoPreviewProps): JSX.Element {
   return (
     <div className="w-full flex flex-col items-center gap-4">
@@ -56,7 +56,12 @@ export default function VideoPreview({
               className="rounded-full gap-2 bg-green-600 hover:bg-green-700"
               disabled={loading || !download}
             >
-              <a href={download} download="generated-video.mp4" target="_blank" rel="noopener noreferrer">
+              <a
+                href={download}
+                download="generated-video.mp4"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Download className="h-4 w-4" />
                 Download
               </a>
@@ -67,15 +72,20 @@ export default function VideoPreview({
         <div className="w-full aspect-video flex items-center justify-center bg-neutral-900 rounded-3xl">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="h-10 w-10 animate-spin text-indigo-500" />
-            <p className="text-lg font-medium">Generating your video...</p>
-            <p className="text-sm text-neutral-400">This may take a minute or two</p>
+            <p className="text-lg font-medium">Generating your video... %</p>
+            <p className="text-sm text-neutral-400">
+              This may take a minute or two
+            </p>
+            <p>hello</p>
           </div>
         </div>
       ) : (
         <div className="w-full aspect-video flex items-center justify-center bg-neutral-900 rounded-3xl">
-          <p className="text-lg text-neutral-400">Video preview will appear here</p>
+          <p className="text-lg text-neutral-400">
+            Video preview will appear here
+          </p>
         </div>
       )}
     </div>
-  )
+  );
 }

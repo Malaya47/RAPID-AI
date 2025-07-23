@@ -80,6 +80,12 @@ export default function TextToVideoTab({
   const [credits, setCredits] = useState<number | null>(null);
   // const [jobId, setJobId] = useState<string>("");
 
+  const [currentProgress, setCurrentProgress] = useState(0);
+
+  const totalDurationInSeconds = 360; // 6 minutes
+  const maxSimulatedProgress = 98;
+  const progressIncrement = maxSimulatedProgress / totalDurationInSeconds;
+
   // Fetch credits on mount
   useEffect(() => {
     const fetchCredits = async () => {
@@ -93,6 +99,29 @@ export default function TextToVideoTab({
     };
     fetchCredits();
   }, [user]);
+
+  useEffect(() => {
+    if (!loading) return;
+
+    let progress = 0;
+
+    const interval = setInterval(() => {
+      progress += progressIncrement;
+      if (progress >= maxSimulatedProgress) {
+        progress = maxSimulatedProgress;
+        clearInterval(interval);
+      }
+      setCurrentProgress(Math.floor(progress));
+    }, 1000); // Update every 1 second
+
+    return () => clearInterval(interval);
+  }, [loading]);
+
+  useEffect(() => {
+    if (generated && !loading) {
+      setCurrentProgress(100);
+    }
+  }, [generated, loading]);
 
   const pollJobStatus = async (jobId: string): Promise<any> => {
     const POLLING_INTERVAL = 20000; // 4 seconds
@@ -525,6 +554,7 @@ export default function TextToVideoTab({
                       {isCaptioning && (
                         <div className="flex items-center gap-1 text-yellow-300 text-sm font-normal animate-pulse">
                           <Loader2 className="h-4 w-4 animate-spin" />
+
                           <span>Adding captions...</span>
                         </div>
                       )}
@@ -535,6 +565,7 @@ export default function TextToVideoTab({
                 ) : (
                   <div className="flex items-center justify-center gap-2">
                     <Loader2 className="h-5 w-5 animate-spin" />
+
                     <span>{videoGenerationStage || "Generating Video..."}</span>
                   </div>
                 )}
@@ -555,7 +586,10 @@ export default function TextToVideoTab({
                 <div className="w-full h-64 md:h-96 flex flex-col items-center justify-center bg-neutral-900 rounded-lg">
                   <Loader2 className="h-12 w-12 animate-spin text-indigo-500 mb-4" />
                   <p className="text-lg">
-                    {videoGenerationStage || "Generating your video..."}
+                    {/* {videoGenerationStage || "Progress..."} */}
+                    <span className="text-lg font-medium text-white">
+                      {currentProgress}%
+                    </span>
                   </p>
                   <p className="text-sm text-gray-400 mt-2">
                     This may take a few minutes
