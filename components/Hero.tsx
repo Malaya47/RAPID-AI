@@ -63,6 +63,7 @@ const Hero = () => {
               width={100}
               height={100}
               alt="Create Video"
+              priority={true}
             />
             <Image
               className="md:hidden block w-full rounded-3xl object-"
