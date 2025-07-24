@@ -185,7 +185,7 @@ export async function RawVideo(jobId: string): Promise<JobStatusResponse> {
 
   const data = await response.json();
 
-  if (data.status === "failed") {
+  if (data?.status === "failed") {
     throw new Error(`Video generation failed. Status: ${data.status}`);
   }
 

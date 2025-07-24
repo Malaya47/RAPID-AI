@@ -1,6 +1,6 @@
 "use client";
 
-import { JSX, useState, useEffect } from "react";
+import { JSX, useState, useEffect, useRef } from "react";
 import { SharedVideoProps } from "@/types/video";
 import VideoForm from "./VideoForm";
 import VideoPreview from "./VideoPreview";
@@ -39,8 +39,7 @@ import Example from "../Example";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { SubscriptionService } from "@/lib/subscription";
-// import VideoStatusListener from "../VideoStatusListener";
-// import JobStatus from "../JobStatus";
+import { io, Socket } from "socket.io-client";
 
 export default function TextToVideoTab({
   duration,
@@ -78,13 +77,117 @@ export default function TextToVideoTab({
   const { toast } = useToast();
   const subscriptionService = new SubscriptionService();
   const [credits, setCredits] = useState<number | null>(null);
-  // const [jobId, setJobId] = useState<string>("");
+
+  // Socket.IO references
+  const socket = useRef<Socket | null>(null);
+  const currentJobId = useRef<string>("");
 
   const [currentProgress, setCurrentProgress] = useState(0);
 
   const totalDurationInSeconds = 360; // 6 minutes
   const maxSimulatedProgress = 98;
   const progressIncrement = maxSimulatedProgress / totalDurationInSeconds;
+
+  // Initialize Socket.IO connection on mount
+  useEffect(() => {
+    // Initialize socket connection
+    socket.current = io(process.env.NEXT_PUBLIC_RAILWAY_API_KEY, {
+      transports: ["websocket"],
+      autoConnect: true,
+    });
+
+    // Listen for job status updates
+    socket.current.on(
+      "job_status_update",
+      (data: {
+        status: string;
+        raw_video_url?: string;
+        captioned_video_url?: string;
+        job_id: string;
+      }) => {
+        console.log("Socket job status update:", data);
+
+        // Only process updates for the current job
+        if (data.job_id !== currentJobId.current) {
+          return;
+        }
+
+        // Update generation stage
+        setVideoGenerationStage(`Status: ${data.status}`);
+
+        // Handle raw video URL
+        if (data.raw_video_url) {
+          console.log("Raw video URL received via socket:", data.raw_video_url);
+          setVideoUrl(data.raw_video_url);
+          setPlayableVideoUrl(data.raw_video_url);
+          setIsRawVideo(true);
+          setLoading(false);
+          setGenerated(true);
+          setVideoGenerationStage("Raw video ready");
+
+          // Start captioning process
+          setIsCaptioning(true);
+          setVideoGenerationStage("Adding captions...");
+        }
+
+        // Handle captioned video URL (final result)
+        if (data.captioned_video_url) {
+          console.log(
+            "Captioned video URL received via socket:",
+            data.captioned_video_url
+          );
+          setVideoUrl(data.captioned_video_url);
+          setPlayableVideoUrl(data.captioned_video_url);
+          setIsRawVideo(false);
+          setIsCaptioning(false);
+          setIsVideoLoading(false);
+          setVideoGenerationStage("Captioned video ready");
+          setCurrentProgress(100);
+        }
+
+        // Handle completion or error states
+        if (
+          data.status === "completed" ||
+          data.status === "failed" ||
+          data.status === "error"
+        ) {
+          setLoading(false);
+          setIsVideoLoading(false);
+          setIsCaptioning(false);
+
+          if (data.status === "failed" || data.status === "error") {
+            setError("Video generation failed. Please try again.");
+            toast({
+              title: "Video generation failed",
+              description:
+                "Try again, there might be an issue in generating video. Your credit will not be deducted.",
+              variant: "destructive",
+            });
+          }
+        }
+      }
+    );
+
+    // Handle socket connection events
+    socket.current.on("connect", () => {
+      console.log("Socket connected:", socket.current?.id);
+    });
+
+    socket.current.on("disconnect", () => {
+      console.log("Socket disconnected");
+    });
+
+    socket.current.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    // Cleanup on unmount
+    return () => {
+      if (socket.current) {
+        socket.current.disconnect();
+      }
+    };
+  }, []);
 
   // Fetch credits on mount
   useEffect(() => {
@@ -123,117 +226,6 @@ export default function TextToVideoTab({
     }
   }, [generated, loading]);
 
-  const pollJobStatus = async (jobId: string): Promise<any> => {
-    const POLLING_INTERVAL = 20000; // 4 seconds
-    const MAX_POLLING_TIME = 6 * 60 * 1000; // 6 minutes in milliseconds
-    const startTime = Date.now();
-
-    setIsVideoLoading(true);
-    setLoading(true);
-    setError("");
-    setGenerated(false);
-    setVideoGenerationStage("Generating video...");
-    // Open the preview drawer immediately when video generation starts
-    setShowPreviewDrawer(true);
-
-    return new Promise((resolve, reject) => {
-      const checkStatus = async () => {
-        try {
-          // Check if we've exceeded the time limit
-          if (Date.now() - startTime > MAX_POLLING_TIME) {
-            setError(
-              "Video generation timed out after 3 minutes. Please try again."
-            );
-            toast({
-              title: "Video generation failed",
-              description:
-                "Try again, there might be an issue in generating video. Your credit will not be deducted.",
-              variant: "destructive",
-            });
-            reject(new Error("Video generation timed out after 3 minutes"));
-            return;
-          }
-
-          const data = await RawVideo(jobId);
-          console.log("Raw Video Status:", data.status);
-
-          // Update the generation stage with more specific information if available
-          if (data.status) {
-            setVideoGenerationStage(`Status: ${data.status}`);
-          }
-
-          if (data.raw_video_url) {
-            console.log("Video Status URL: ", data.raw_video_url);
-            const rawVideoUrl: any = data.raw_video_url;
-            setVideoUrl(rawVideoUrl);
-            setPlayableVideoUrl(rawVideoUrl);
-            setIsRawVideo(true);
-            setLoading(false);
-            setGenerated(true);
-            setVideoGenerationStage("Raw video ready");
-
-            // Now start captioning process
-            try {
-              setIsCaptioning(true);
-              setVideoGenerationStage("Adding captions...");
-              const captionedData = await handleCaptionVideo(jobId);
-              setIsCaptioning(false);
-              resolve(captionedData);
-            } catch (err) {
-              // If captioning fails, we still have the raw video URL
-              setIsCaptioning(false);
-              console.error("Error in captioning video:", err);
-              setVideoGenerationStage(
-                "Caption failed, but raw video is available"
-              );
-              resolve({ url: rawVideoUrl });
-            }
-          } else {
-            // Schedule next check if video not ready yet
-            setTimeout(checkStatus, POLLING_INTERVAL);
-          }
-        } catch (err) {
-          reject(err);
-        }
-      };
-
-      checkStatus();
-    });
-  };
-
-  const handleCaptionVideo = async (jobId: string): Promise<any> => {
-    const POLLING_INTERVAL = 4000; // 4 seconds
-
-    return new Promise((resolve, reject) => {
-      const checkCaptionedStatus = async () => {
-        try {
-          const data = await CaptionVideo(jobId);
-          console.log("Captioned Video Status:", data.status);
-
-          if (data.status) {
-            setVideoGenerationStage(`Caption status: ${data.status}`);
-          }
-
-          if (data.captioned_video_url) {
-            console.log("Captioned Video URL: ", data.captioned_video_url);
-            const captionedUrl: any = data.captioned_video_url;
-            setVideoUrl(captionedUrl);
-            setPlayableVideoUrl(captionedUrl);
-            setIsRawVideo(false);
-            setIsVideoLoading(false);
-            setVideoGenerationStage("Captioned video ready");
-            resolve({ url: captionedUrl });
-          } else {
-            setTimeout(checkCaptionedStatus, POLLING_INTERVAL);
-          }
-        } catch (err) {
-          reject(err);
-        }
-      };
-      checkCaptionedStatus();
-    });
-  };
-
   const handleGenerateNarration = async (): Promise<void> => {
     if (!prompt) return;
 
@@ -269,6 +261,7 @@ export default function TextToVideoTab({
       });
       return;
     }
+
     setLoading(true);
     setError("");
     setGenerated(false);
@@ -279,6 +272,10 @@ export default function TextToVideoTab({
     setPlayableVideoUrl("");
     setIsVideoLoading(true);
     setVideoGenerationStage("Preparing video generation...");
+    setCurrentProgress(0);
+
+    // Open the preview drawer immediately when video generation starts
+    setShowPreviewDrawer(true);
 
     try {
       // Update script with the edited narration
@@ -292,26 +289,66 @@ export default function TextToVideoTab({
         fontBaseColor,
         fontHighlightColor
       );
-      console.log("Video generation job created: ", jobId);
+
+      console.log("Video generation job created:", jobId);
+      currentJobId.current = jobId;
 
       setVideoGenerationStage("Video job created, generating video...");
 
-      const videoData = await pollJobStatus(jobId); //TODO: yha fix krna hai polling ko hta kr
+      // Get initial status from RawVideo API
+      try {
+        const initialData = await RawVideo(jobId);
+        console.log("Initial Raw Video Status:", initialData);
 
-      // Get the final video URL from the returned data
-      const finalVideoUrl = videoData.url || videoUrl;
+        // Check if initialData exists and has status
+        if (initialData && initialData.status) {
+          setVideoGenerationStage(`Status: ${initialData.status}`);
+        } else {
+          console.log(
+            "No initial status available, waiting for socket updates"
+          );
+          setVideoGenerationStage("Initializing video generation...");
+        }
 
-      if (!finalVideoUrl) {
-        throw new Error("Failed to retrieve video URL");
+        // If video is already ready (unlikely but possible)
+        if (initialData && initialData.raw_video_url) {
+          setVideoUrl(initialData.raw_video_url);
+          setPlayableVideoUrl(initialData.raw_video_url);
+          setIsRawVideo(true);
+          setLoading(false);
+          setGenerated(true);
+          setVideoGenerationStage("Raw video ready");
+        }
+      } catch (err) {
+        console.error("Error getting initial video status:", err);
+        // Don't throw error, just continue with socket updates
+        setVideoGenerationStage("Waiting for video generation updates...");
       }
 
-      console.log("Video URL retrieved successfully:", finalVideoUrl);
+      // Socket will handle the rest of the updates
+      // Wait for socket events to complete the process
+    } catch (err) {
+      console.error("Error in video generation process:", err);
+      setError(
+        `Failed to generate video: ${
+          err instanceof Error ? err.message : "Unknown error"
+        }`
+      );
+      setLoading(false);
+      setIsVideoLoading(false);
+      currentJobId.current = "";
+    }
+  };
 
-      // Store video in Supabase
+  // Handle storing video when final URL is available
+  useEffect(() => {
+    const storeVideo = async () => {
+      if (!videoUrl || isRawVideo || !user || !generated) return;
+
       try {
         setVideoGenerationStage("Saving video to database...");
         await storeVideoInSupabase(
-          finalVideoUrl,
+          videoUrl,
           user.id,
           duration,
           prompt, // Using the prompt as the title
@@ -319,6 +356,7 @@ export default function TextToVideoTab({
         );
         console.log("Video stored in Supabase successfully");
         setVideoGenerationStage("Video saved successfully");
+        currentJobId.current = ""; // Clear job ID after completion
       } catch (storeErr) {
         console.error("Error storing video in Supabase:", storeErr);
         if (
@@ -337,18 +375,19 @@ export default function TextToVideoTab({
           );
         }
       }
-    } catch (err) {
-      console.error("Error in video generation process:", err);
-      setError(
-        `Failed to generate video: ${
-          err instanceof Error ? err.message : "Unknown error"
-        }`
-      );
-    } finally {
-      setLoading(false);
-      setIsVideoLoading(false);
-    }
-  };
+    };
+
+    storeVideo();
+  }, [
+    videoUrl,
+    isRawVideo,
+    user,
+    generated,
+    duration,
+    prompt,
+    narration,
+    router,
+  ]);
 
   const handleNarrationDialogClose = (open: boolean) => {
     if (!open && showNarrationEditor) {
@@ -586,7 +625,6 @@ export default function TextToVideoTab({
                 <div className="w-full h-64 md:h-96 flex flex-col items-center justify-center bg-neutral-900 rounded-lg">
                   <Loader2 className="h-12 w-12 animate-spin text-indigo-500 mb-4" />
                   <p className="text-lg">
-                    {/* {videoGenerationStage || "Progress..."} */}
                     <span className="text-lg font-medium text-white">
                       {currentProgress}%
                     </span>
