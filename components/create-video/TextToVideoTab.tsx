@@ -343,7 +343,19 @@ export default function TextToVideoTab({
   // Handle storing video when final URL is available
   useEffect(() => {
     const storeVideo = async () => {
-      if (!videoUrl || isRawVideo || !user || !generated) return;
+      // Only store if:
+      // 1. Final captioned video URL is available
+      // 2. Not raw video
+      // 3. Generation is completed
+      if (
+        !videoUrl ||
+        isRawVideo || // skip raw videos
+        !user ||
+        !generated ||
+        videoGenerationStage !== "Captioned video ready"
+      ) {
+        return;
+      }
 
       try {
         setVideoGenerationStage("Saving video to database...");
@@ -351,10 +363,10 @@ export default function TextToVideoTab({
           videoUrl,
           user.id,
           duration,
-          prompt, // Using the prompt as the title
-          narration // Using the narration as the description
+          prompt,
+          narration
         );
-        console.log("Video stored in Supabase successfully");
+        console.log("Captioned video stored in Supabase successfully");
         setVideoGenerationStage("Video saved successfully");
         currentJobId.current = ""; // Clear job ID after completion
       } catch (storeErr) {
@@ -386,6 +398,7 @@ export default function TextToVideoTab({
     duration,
     prompt,
     narration,
+    videoGenerationStage,
     router,
   ]);
 
