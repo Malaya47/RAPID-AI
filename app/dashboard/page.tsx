@@ -278,7 +278,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* {subscription && (
+      {/* { {subscription && (
         <div className="mb-6 p-4 rounded-lg shadow">
           <div className="flex items-center justify-between">
             <div>
@@ -290,15 +290,21 @@ export default function DashboardPage() {
                 <TooltipTrigger asChild>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium">
-                      {formatDistanceToNow(new Date(subscription.end_date), { addSuffix: true })}
+                      {formatDistanceToNow(new Date(subscription.end_date), {
+                        addSuffix: true,
+                      })}
                     </span>
-                    {new Date(subscription.end_date).getTime() - Date.now() < 7 * 24 * 60 * 60 * 1000 && (
+                    {new Date(subscription.end_date).getTime() - Date.now() <
+                      7 * 24 * 60 * 60 * 1000 && (
                       <AlertCircle className="h-4 w-4 text-red-600" />
                     )}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Your current plan will end on {format(new Date(subscription.end_date), 'MMMM do, yyyy')}</p>
+                  <p>
+                    Your current plan will end on{" "}
+                    {format(new Date(subscription.end_date), "MMMM do, yyyy")}
+                  </p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -306,11 +312,13 @@ export default function DashboardPage() {
           <div className="mt-2">
             <div className="flex justify-between text-sm text-gray-600">
               <span>Credits Remaining:</span>
-              <span className="font-medium">{subscription.credits_remaining}</span>
+              <span className="font-medium">
+                {subscription.credits_remaining}
+              </span>
             </div>
           </div>
         </div>
-      )} */}
+      )} } */}
     </div>
   );
 }

@@ -77,6 +77,7 @@ export default function TextToVideoTab({
   const { toast } = useToast();
   const subscriptionService = new SubscriptionService();
   const [credits, setCredits] = useState<number | null>(null);
+  const [videoStored, setVideoStored] = useState<boolean>(false);
 
   // Socket.IO references
   const socket = useRef<Socket | null>(null);
@@ -265,6 +266,7 @@ export default function TextToVideoTab({
     setLoading(true);
     setError("");
     setGenerated(false);
+    setVideoStored(false); // RESET STORAGE FLAG
     setShowNarrationEditor(false);
     setIsRawVideo(false);
     setIsCaptioning(false);
@@ -347,12 +349,14 @@ export default function TextToVideoTab({
       // 1. Final captioned video URL is available
       // 2. Not raw video
       // 3. Generation is completed
+      // 4. Video hasn't been stored yet (NEW CONDITION)
       if (
         !videoUrl ||
         isRawVideo || // skip raw videos
         !user ||
         !generated ||
-        videoGenerationStage !== "Captioned video ready"
+        videoGenerationStage !== "Captioned video ready" ||
+        videoStored // PREVENT DUPLICATE STORAGE
       ) {
         return;
       }
@@ -368,6 +372,7 @@ export default function TextToVideoTab({
         );
         console.log("Captioned video stored in Supabase successfully");
         setVideoGenerationStage("Video saved successfully");
+        setVideoStored(true); // MARK AS STORED
         currentJobId.current = ""; // Clear job ID after completion
       } catch (storeErr) {
         console.error("Error storing video in Supabase:", storeErr);
@@ -393,15 +398,12 @@ export default function TextToVideoTab({
   }, [
     videoUrl,
     isRawVideo,
-    user,
+    user?.id, // Only user.id, not the entire user object
     generated,
-    duration,
-    prompt,
-    narration,
     videoGenerationStage,
-    router,
+    videoStored, // Add this to dependencies
+    // Remove duration, prompt, narration from dependencies as they shouldn't trigger re-storage
   ]);
-
   const handleNarrationDialogClose = (open: boolean) => {
     if (!open && showNarrationEditor) {
       setShowNarrationWarning(true);
