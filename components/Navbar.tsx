@@ -84,8 +84,8 @@ const Navbar = () => {
               className="flex-none text-2xl font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-black rounded-lg"
               aria-label="Rapid AI"
             >
-              <span className="text-white">Rapid</span>
-              <span className="text-indigo-400">AI</span>
+              <span className="text-white">Ai</span>
+              <span className="text-indigo-400">GenReels</span>
             </Link>
           </motion.div>
 

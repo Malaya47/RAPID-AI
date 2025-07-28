@@ -1,7 +1,7 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Facebook, Twitter, Instagram, Linkedin, Youtube } from 'lucide-react';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Facebook, Twitter, Instagram, Linkedin, Youtube } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -12,12 +12,16 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Company Info */}
           <div>
-            <Link href="/" className="flex-none text-2xl font-semibold mb-6 block">
-              <span className="text-white">Rapid</span>
-              <span className="text-indigo-400">AI</span>
+            <Link
+              href="/"
+              className="flex-none text-2xl font-semibold mb-6 block"
+            >
+              <span className="text-white">Ai</span>
+              <span className="text-indigo-400">GenReels</span>
             </Link>
             <p className="text-neutral-400 mb-6">
-              Transform your ideas into engaging videos with AI-powered video generation.
+              Transform your ideas into engaging videos with AI-powered video
+              generation.
             </p>
             <div className="flex space-x-4">
               <Link href="#" className="text-neutral-400 hover:text-indigo-400">
@@ -43,22 +47,34 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6">Quick Links</h3>
             <ul className="space-y-4">
               <li>
-                <Link href="#features" className="text-neutral-400 hover:text-indigo-400">
+                <Link
+                  href="#features"
+                  className="text-neutral-400 hover:text-indigo-400"
+                >
                   Features
                 </Link>
               </li>
               <li>
-                <Link href="#pricing" className="text-neutral-400 hover:text-indigo-400">
+                <Link
+                  href="#pricing"
+                  className="text-neutral-400 hover:text-indigo-400"
+                >
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="#examples" className="text-neutral-400 hover:text-indigo-400">
+                <Link
+                  href="#examples"
+                  className="text-neutral-400 hover:text-indigo-400"
+                >
                   Examples
                 </Link>
               </li>
               <li>
-                <Link href="#faq" className="text-neutral-400 hover:text-indigo-400">
+                <Link
+                  href="#faq"
+                  className="text-neutral-400 hover:text-indigo-400"
+                >
                   FAQ
                 </Link>
               </li>
@@ -70,22 +86,34 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6">Resources</h3>
             <ul className="space-y-4">
               <li>
-                <Link href="#" className="text-neutral-400 hover:text-indigo-400">
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-indigo-400"
+                >
                   Documentation
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-neutral-400 hover:text-indigo-400">
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-indigo-400"
+                >
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-neutral-400 hover:text-indigo-400">
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-indigo-400"
+                >
                   Support Center
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-neutral-400 hover:text-indigo-400">
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-indigo-400"
+                >
                   API Reference
                 </Link>
               </li>
@@ -115,16 +143,25 @@ const Footer = () => {
         <div className="border-t border-neutral-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-neutral-400 text-sm">
-              © {currentYear} RapidAI. All rights reserved.
+              © {currentYear} AiGenReels. All rights reserved.
             </p>
             <div className="flex space-x-6">
-              <Link href="#" className="text-neutral-400 hover:text-indigo-400 text-sm">
+              <Link
+                href="#"
+                className="text-neutral-400 hover:text-indigo-400 text-sm"
+              >
                 Privacy Policy
               </Link>
-              <Link href="#" className="text-neutral-400 hover:text-indigo-400 text-sm">
+              <Link
+                href="#"
+                className="text-neutral-400 hover:text-indigo-400 text-sm"
+              >
                 Terms of Service
               </Link>
-              <Link href="#" className="text-neutral-400 hover:text-indigo-400 text-sm">
+              <Link
+                href="#"
+                className="text-neutral-400 hover:text-indigo-400 text-sm"
+              >
                 Cookie Policy
               </Link>
             </div>

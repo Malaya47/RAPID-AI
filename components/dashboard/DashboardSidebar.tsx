@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -13,18 +13,23 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@/context/auth-context"
-import { VideoIcon, LayoutDashboardIcon, Plus, LogOutIcon, CreditCard } from "lucide-react"
+import { useAuth } from "@/context/auth-context";
+import {
+  VideoIcon,
+  LayoutDashboardIcon,
+  Plus,
+  LogOutIcon,
+  CreditCard,
+} from "lucide-react";
 
 interface SidebarProps {
-  className?: string
+  className?: string;
 }
 
 export function DashboardSidebar({ className }: SidebarProps) {
-
   const router = useRouter();
-  const pathname = usePathname()
-  const { signOut } = useAuth()
+  const pathname = usePathname();
+  const { signOut } = useAuth();
 
   const sidebarItems = [
     {
@@ -47,7 +52,7 @@ export function DashboardSidebar({ className }: SidebarProps) {
   const handleSignOut = async () => {
     await signOut();
     router.push("/");
-  }
+  };
 
   return (
     <>
@@ -59,9 +64,12 @@ export function DashboardSidebar({ className }: SidebarProps) {
                 <div className="w-full max-w-5xl">
                   <div className="gap-2 mr-4">
                     <div className="w-full rounded-md text-white">
-                      <a href="/" className="flex items-center gap-2 p-2 font-medium text-lg">
+                      <a
+                        href="/"
+                        className="flex items-center gap-2 p-2 font-medium text-lg"
+                      >
                         <VideoIcon className="text-indigo-500" />
-                        RapidAI
+                        AiGenReels
                       </a>
                     </div>
                   </div>
@@ -80,9 +88,15 @@ export function DashboardSidebar({ className }: SidebarProps) {
                   asChild
                   className={cn(
                     "md:w-60 rounded-lg px-3 py-5 text-sm font-medium hover:bg-neutral-900 hover:text-white hover:rounded-full",
-                    pathname === item.href ? "bg-neutral-800 text-white rounded-full" : "transparent",
-                  )}>
-                  <Link href={item.href} className="mx-auto py-3 text-neutral-400">
+                    pathname === item.href
+                      ? "bg-neutral-800 text-white rounded-full"
+                      : "transparent"
+                  )}
+                >
+                  <Link
+                    href={item.href}
+                    className="mx-auto py-3 text-neutral-400"
+                  >
                     <div className="flex items-center gap-4">
                       <span className="text-indigo-500">{item.icon}</span>
                       <span>{item.label}</span>
@@ -90,22 +104,19 @@ export function DashboardSidebar({ className }: SidebarProps) {
                   </Link>
                 </SidebarMenuButton>
               ))}
-
             </SidebarMenu>
           </div>
 
           <SidebarMenu className="border-t border-neutral-800">
             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                className="mlauto my-5"
-              >
+              <SidebarMenuButton asChild className="mlauto my-5">
                 <Button
                   variant="outline"
                   className={cn(
-                    "md:w-60 px-3 mx-auto py-5 text-sm font-medium hover:bg-neutral-900 hover:text-white hover:rounded-full bg-neutral-800 text-white rounded-full border-neutral-800",
+                    "md:w-60 px-3 mx-auto py-5 text-sm font-medium hover:bg-neutral-900 hover:text-white hover:rounded-full bg-neutral-800 text-white rounded-full border-neutral-800"
                   )}
-                  onClick={handleSignOut}>
+                  onClick={handleSignOut}
+                >
                   <div className="py-3 text-white text-left mr-auto">
                     <div className="flex items-center justify-start gap-4">
                       <LogOutIcon className="text-indigo-500" />
@@ -114,13 +125,11 @@ export function DashboardSidebar({ className }: SidebarProps) {
                   </div>
                 </Button>
               </SidebarMenuButton>
-
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarRail />
-      </Sidebar >
+      </Sidebar>
     </>
-  )
+  );
 }
-
