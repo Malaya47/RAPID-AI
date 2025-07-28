@@ -106,7 +106,7 @@ export default function TextToVideoTab({
         captioned_video_url?: string;
         job_id: string;
       }) => {
-        // console.log("Socket job status update:", data);
+        console.log("Socket job status update:", data);
 
         // Only process updates for the current job
         if (data.job_id !== currentJobId.current) {

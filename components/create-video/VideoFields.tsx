@@ -30,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { generateVoicePreview } from "@/app/actions/generateVoicePreview";
+// import { generateVoicePreview } from "@/app/actions/generateVoicePreview";
 
 export default function VideoFields({
   duration,
@@ -83,7 +83,9 @@ export default function VideoFields({
 
     try {
       setIsPlaying(true);
-      const audioUrl = await generateVoicePreview(voiceOption);
+      // Construct URL from voice name
+      const audioUrl = `/voice-previews/${voiceOption}.mp3`;
+
       const audio = new Audio(audioUrl);
       await audio.play();
     } catch (error) {
