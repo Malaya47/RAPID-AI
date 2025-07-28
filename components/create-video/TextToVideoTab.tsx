@@ -82,6 +82,7 @@ export default function TextToVideoTab({
   // Socket.IO references
   const socket = useRef<Socket | null>(null);
   const currentJobId = useRef<string>("");
+  const storedJobId = useRef<string>(""); // Track which job has been stored
 
   const [currentProgress, setCurrentProgress] = useState(0);
 
@@ -123,7 +124,9 @@ export default function TextToVideoTab({
           setPlayableVideoUrl(data.raw_video_url);
           setIsRawVideo(true);
           setLoading(false);
+
           setGenerated(true);
+
           setVideoGenerationStage("Raw video ready");
 
           // Start captioning process
@@ -144,6 +147,9 @@ export default function TextToVideoTab({
           setIsVideoLoading(false);
           setVideoGenerationStage("Captioned video ready");
           setCurrentProgress(100);
+
+          // Mark as generated only when captioned video is ready
+          setGenerated(true);
         }
 
         // Handle completion or error states
@@ -267,6 +273,7 @@ export default function TextToVideoTab({
     setError("");
     setGenerated(false);
     setVideoStored(false); // RESET STORAGE FLAG
+    storedJobId.current = ""; // Reset stored job ID for new generation
     setShowNarrationEditor(false);
     setIsRawVideo(false);
     setIsCaptioning(false);
@@ -295,7 +302,17 @@ export default function TextToVideoTab({
       console.log("Video generation job created:", jobId);
       currentJobId.current = jobId;
 
-      setVideoGenerationStage("Video job created, generating video...");
+      // Emit watch_job event to start watching for updates
+      if (socket.current && socket.current.connected) {
+        console.log("Emitting watch_job event for job:", jobId);
+        socket.current.emit("watch_job", { job_id: jobId });
+        setVideoGenerationStage("Watching job progress...");
+      } else {
+        console.error("Socket not connected, cannot watch job");
+        setVideoGenerationStage(
+          "Connection error - please refresh and try again"
+        );
+      }
 
       // Get initial status from RawVideo API
       try {
@@ -345,37 +362,68 @@ export default function TextToVideoTab({
   // Handle storing video when final URL is available
   useEffect(() => {
     const storeVideo = async () => {
-      // Only store if:
-      // 1. Final captioned video URL is available
-      // 2. Not raw video
-      // 3. Generation is completed
-      // 4. Video hasn't been stored yet (NEW CONDITION)
+      console.log("storeVideo useEffect triggered with:", {
+        videoUrl: videoUrl,
+        isRawVideo,
+        hasUser: !!user,
+        generated,
+        videoGenerationStage,
+        videoStored,
+        currentJobId: currentJobId.current,
+        storedJobId: storedJobId.current,
+      });
+
+      // Only store CAPTIONED videos (final processed videos with captions)
+      // Skip if:
+      // 1. No video URL
+      // 2. It's a raw video (not captioned yet)
+      // 3. No user
+      // 4. Not marked as generated (final)
+      // 5. Not in "Captioned video ready" stage
+      // 6. Already stored
+      // 7. No current job ID
+      // 8. Already stored this specific job
       if (
         !videoUrl ||
-        isRawVideo || // skip raw videos
+        isRawVideo || // IMPORTANT: Skip raw videos, only store captioned videos
         !user ||
-        !generated ||
-        videoGenerationStage !== "Captioned video ready" ||
-        videoStored // PREVENT DUPLICATE STORAGE
+        !generated || // Only store when finally generated (set to true only for captioned videos)
+        videoGenerationStage !== "Captioned video ready" || // Only store when captions are done
+        videoStored ||
+        !currentJobId.current ||
+        storedJobId.current === currentJobId.current
       ) {
+        console.log(
+          "Skipping video storage - waiting for captioned video or already stored"
+        );
         return;
       }
 
+      console.log("Storing CAPTIONED video for job:", currentJobId.current);
+
       try {
-        setVideoGenerationStage("Saving video to database...");
+        setVideoGenerationStage("Saving captioned video to database...");
+        setVideoStored(true);
+        storedJobId.current = currentJobId.current;
+
         await storeVideoInSupabase(
-          videoUrl,
+          videoUrl, // This will be the captioned video URL
           user.id,
           duration,
           prompt,
           narration
         );
-        console.log("Captioned video stored in Supabase successfully");
-        setVideoGenerationStage("Video saved successfully");
-        setVideoStored(true); // MARK AS STORED
-        currentJobId.current = ""; // Clear job ID after completion
+        console.log(
+          "Captioned video stored in Supabase successfully for job:",
+          currentJobId.current
+        );
+        setVideoGenerationStage("Captioned video saved successfully");
+        currentJobId.current = "";
       } catch (storeErr) {
-        console.error("Error storing video in Supabase:", storeErr);
+        console.error("Error storing captioned video in Supabase:", storeErr);
+        setVideoStored(false);
+        storedJobId.current = "";
+
         if (
           storeErr instanceof Error &&
           storeErr.message === "Insufficient credits"
@@ -386,7 +434,7 @@ export default function TextToVideoTab({
           router.push("/pricing");
         } else {
           setError(
-            `Video generated but failed to save: ${
+            `Captioned video generated but failed to save: ${
               storeErr instanceof Error ? storeErr.message : "Unknown error"
             }`
           );
@@ -398,12 +446,12 @@ export default function TextToVideoTab({
   }, [
     videoUrl,
     isRawVideo,
-    user?.id, // Only user.id, not the entire user object
+    user?.id,
     generated,
     videoGenerationStage,
-    videoStored, // Add this to dependencies
-    // Remove duration, prompt, narration from dependencies as they shouldn't trigger re-storage
+    videoStored,
   ]);
+
   const handleNarrationDialogClose = (open: boolean) => {
     if (!open && showNarrationEditor) {
       setShowNarrationWarning(true);
