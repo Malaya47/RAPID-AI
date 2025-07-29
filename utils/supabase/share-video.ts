@@ -18,6 +18,7 @@ export async function generateSlugAndEmail({
     slug,
     s3_url: videoUrl,
     email: userEmail,
+    created_at: new Date(),
   });
 
   if (error) {

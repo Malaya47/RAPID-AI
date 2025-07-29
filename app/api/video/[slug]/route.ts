@@ -12,14 +12,14 @@ export async function GET(
   const { data, error } = await supabase
     .from("video_slugs")
     .select("s3_url")
-    .eq("slug", slug as string)
+    .eq("slug", slug as any)
     .single();
 
-  if (error || !data) {
+  if (error || !data || typeof data !== "object" || !("s3_url" in data)) {
     return new NextResponse("Video not found", { status: 404 });
   }
 
-  const s3Url = data.s3_url;
+  const s3Url = (data as { s3_url: string }).s3_url;
 
   try {
     // 2. Stream the video directly from S3
