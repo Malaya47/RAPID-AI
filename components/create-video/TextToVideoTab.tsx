@@ -40,6 +40,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { SubscriptionService } from "@/lib/subscription";
 import { io, Socket } from "socket.io-client";
+import { generateSlugAndEmail } from "@/utils/supabase/share-video";
 
 export default function TextToVideoTab({
   duration,
@@ -417,6 +418,17 @@ export default function TextToVideoTab({
           "Captioned video stored in Supabase successfully for job:",
           currentJobId.current
         );
+        // ✅ NEW: Generate slug + send email
+        const slug = await generateSlugAndEmail({
+          videoUrl,
+          userEmail: user.email ?? "",
+        });
+
+        if (slug) {
+          console.log("Slug generated and email sent:", slug);
+        } else {
+          console.warn("Slug or email failed");
+        }
         setVideoGenerationStage("Captioned video saved successfully");
         currentJobId.current = "";
       } catch (storeErr) {
