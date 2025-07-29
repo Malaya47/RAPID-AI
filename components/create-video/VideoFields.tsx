@@ -1,7 +1,7 @@
 // src/components/create-video/VideoForm.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -78,8 +78,16 @@ export default function VideoFields({
   // Display only first 3 voices or all voices based on state
   const displayedVoices = showAllVoices ? voices : voices.slice(0, 2);
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const handleVoiceChange = async (voiceOption: VoiceOption) => {
     if (setVoice) setVoice(voiceOption);
+
+    // Stop and clean up any currently playing audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
 
     try {
       setIsPlaying(true);
@@ -87,6 +95,7 @@ export default function VideoFields({
       const audioUrl = `/voice-previews/${voiceOption}.mp3`;
 
       const audio = new Audio(audioUrl);
+      audioRef.current = audio;
       await audio.play();
     } catch (error) {
       console.error("Error playing voice preview:", error);
