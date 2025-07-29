@@ -34,7 +34,7 @@ export async function GET(
       status: 200,
       headers: {
         "Content-Type": s3Res.headers.get("content-type") || "video/mp4",
-        // "Content-Disposition": `inline; filename="video.mp4"`,
+        "Content-Disposition": `inline; filename="video.mp4"`,
         "Cache-Control": "public, max-age=86400",
         // Pass through Content-Length if available
         ...(s3Res.headers.get("content-length")
