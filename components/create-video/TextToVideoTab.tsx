@@ -713,7 +713,8 @@ export default function TextToVideoTab({
             <DrawerFooter>
               <DrawerClose asChild>
                 <Button
-                  onClick={() => setShowPreviewWarning(true)}
+                  // onClick={() => setShowPreviewWarning(true)}
+                  onClick={confirmPreviewClose}
                   className="gap-2 bg-transparent rounded-3xl"
                   variant="outline"
                 >
@@ -725,7 +726,7 @@ export default function TextToVideoTab({
         </DrawerContent>
       </Drawer>
 
-      <Dialog open={showPreviewWarning} onOpenChange={setShowPreviewWarning}>
+      {/* <Dialog open={showPreviewWarning} onOpenChange={setShowPreviewWarning}>
         <DialogContent className="bg-black/20 backdrop-blur-sm text-white border-none shadow-md shadow-indigo-500">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 font-medium">
@@ -756,7 +757,7 @@ export default function TextToVideoTab({
             </div>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       {generated && !showPreviewDrawer && (
         <Button
