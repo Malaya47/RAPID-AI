@@ -94,7 +94,7 @@ export default function TextToVideoTab({
   // Initialize Socket.IO connection on mount
   useEffect(() => {
     // Initialize socket connection
-    socket.current = io(process.env.NEXT_PUBLIC_RAILWAY_API_KEY, {
+    socket.current = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, {
       transports: ["websocket"],
       autoConnect: true,
     });
