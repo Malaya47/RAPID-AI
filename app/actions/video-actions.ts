@@ -117,6 +117,34 @@ export async function generateNarration(
   return response.json();
 }
 
+export async function generateViralNarration(
+  scriptPrompt: string,
+  timeLimit: string
+): Promise<any> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_RAILWAY_API_KEY}/generate-narration-new/`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        script_prompt: scriptPrompt,
+        time_limit: timeLimit,
+        user_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Viral narration API request failed with status ${response.status}`
+    );
+  }
+
+  return response.json();
+}
+
 /**
  * Generates a video based on narration data, voice, and time limit
  */

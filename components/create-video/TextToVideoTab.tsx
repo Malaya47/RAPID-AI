@@ -7,6 +7,7 @@ import VideoPreview from "./VideoPreview";
 import {
   CaptionVideo,
   generateNarration,
+  generateViralNarration,
   generateVideo,
   RawVideo,
   storeVideoInSupabase,
@@ -79,6 +80,10 @@ export default function TextToVideoTab({
   const subscriptionService = new SubscriptionService();
   const [credits, setCredits] = useState<number | null>(null);
   const [videoStored, setVideoStored] = useState<boolean>(false);
+  const [isGeneratingNarration, setIsGeneratingNarration] =
+    useState<boolean>(false);
+  const [isGeneratingViralNarration, setIsGeneratingViralNarration] =
+    useState<boolean>(false);
 
   // Socket.IO references
   const socket = useRef<Socket | null>(null);
@@ -236,8 +241,7 @@ export default function TextToVideoTab({
 
   const handleGenerateNarration = async (): Promise<void> => {
     if (!prompt) return;
-
-    setLoading(true);
+    setIsGeneratingNarration(true);
     setError("");
     setGenerated(false);
 
@@ -254,7 +258,31 @@ export default function TextToVideoTab({
         }`
       );
     } finally {
-      setLoading(false);
+      setIsGeneratingNarration(true);
+    }
+  };
+
+  const handleGenerateViralNarration = async (): Promise<void> => {
+    if (!prompt) return;
+
+    setIsGeneratingViralNarration(true);
+    setError("");
+    setGenerated(false);
+
+    try {
+      const narrationData = await generateViralNarration(prompt, duration);
+      setScript(narrationData);
+      setNarration(narrationData.script);
+      setShowNarrationEditor(true);
+    } catch (err) {
+      console.error("Error generating narration:", err);
+      setError(
+        `Failed to generate viral narration: ${
+          err instanceof Error ? err.message : "Unknown error"
+        }`
+      );
+    } finally {
+      setIsGeneratingViralNarration(true);
     }
   };
 
@@ -559,9 +587,9 @@ export default function TextToVideoTab({
           <Button
             onClick={handleGenerateNarration}
             disabled={!prompt || loading}
-            className="w-fit gap-2 bg-indigo-600 hover:bg-indigo-700 rounded-3xl"
+            className="w-fit gap-2 me-4 bg-indigo-600 hover:bg-indigo-700 rounded-3xl"
           >
-            {loading ? (
+            {isGeneratingNarration ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Generating...
@@ -570,6 +598,24 @@ export default function TextToVideoTab({
               <>
                 <Wand2 className="h-4 w-4" />
                 Generate Narration
+              </>
+            )}
+          </Button>
+
+          <Button
+            onClick={handleGenerateViralNarration}
+            disabled={!prompt || loading}
+            className="w-fit gap-2 bg-indigo-600 hover:bg-indigo-700 rounded-3xl"
+          >
+            {isGeneratingViralNarration ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Wand2 className="h-4 w-4" />
+                Viral Narration
               </>
             )}
           </Button>
