@@ -157,7 +157,7 @@ export default function VideoFields({
             </Button>
           )}
         </div>
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <Label className="text-lg flex items-center gap-2">
             <Timer className="bg-indigo-600 p-2 rounded-lg w-8 h-8" />
             Duration
@@ -180,7 +180,7 @@ export default function VideoFields({
               </div>
             ))}
           </RadioGroup>
-        </div>
+        </div> */}
         <div className="space-y-4">
           <Label className="text-lg flex items-center gap-2">
             <Type className="bg-indigo-600 p-2 rounded-lg w-8 h-8" />
