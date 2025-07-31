@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
+  Pause,
   Play,
   Speech,
   Timer,
@@ -55,7 +56,7 @@ export default function VideoFields({
   ];
   const durations: DurationOption[] = ["30-45", "45-60", "60-90"];
   const [showAllVoices, setShowAllVoices] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [playingVoice, setPlayingVoice] = useState<VoiceOption | null>(null);
 
   const fonts: FontName[] = [
     "Anton-Regular.ttf",
@@ -76,7 +77,8 @@ export default function VideoFields({
   ];
 
   // Display only first 3 voices or all voices based on state
-  const displayedVoices = showAllVoices ? voices : voices.slice(0, 2);
+  // const displayedVoices = showAllVoices ? voices : voices.slice(0, 2);
+  const displayedVoices = voices;
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -90,17 +92,23 @@ export default function VideoFields({
     }
 
     try {
-      setIsPlaying(true);
+      setPlayingVoice(voiceOption);
       // Construct URL from voice name
       const audioUrl = `/voice-previews/${voiceOption}.mp3`;
 
       const audio = new Audio(audioUrl);
       audioRef.current = audio;
+
+      // When audio finishes, reset state
+      audio.onended = () => {
+        setPlayingVoice(null);
+      };
+
       await audio.play();
     } catch (error) {
       console.error("Error playing voice preview:", error);
     } finally {
-      setIsPlaying(false);
+      setPlayingVoice(voiceOption);
     }
   };
 
@@ -112,7 +120,7 @@ export default function VideoFields({
             <Speech className="bg-indigo-600 p-2 rounded-lg w-8 h-8" />
             Voice
           </Label>
-          <div className="flex flex-col gap-4 w-full">
+          <div className="grid grid-cols-2 gap-4 w-full">
             {displayedVoices.map((voiceOption) => (
               <Button
                 key={voiceOption}
@@ -127,7 +135,11 @@ export default function VideoFields({
                 onClick={() => handleVoiceChange(voiceOption)}
               >
                 <div className="flex items-center space-x-2 w-full">
-                  <Play className="bg-neutral-800 rounded-full w-8 h-8" />
+                  {playingVoice === voiceOption ? (
+                    <Pause className="rounded-full w-8 h-8" />
+                  ) : (
+                    <Play className="rounded-full w-8 h-8" />
+                  )}
                   <div className="text-left">
                     <div className="capitalize">{voiceOption}</div>
                     <div className="text-xs text-neutral-500">OpenAI Voice</div>
@@ -139,7 +151,7 @@ export default function VideoFields({
               </Button>
             ))}
           </div>
-          {voices.length > 2 && (
+          {/* {voices.length > 2 && (
             <Button
               variant="ghost"
               className="w-full flex items-center justify-center text-neutral-100 hover:text-neutral-100 mt-2 bg-neutral-800 hover:bg-neutral-900 rounded-3xl"
@@ -155,7 +167,7 @@ export default function VideoFields({
                 </>
               )}
             </Button>
-          )}
+          )} */}
         </div>
         {/* <div className="space-y-2">
           <Label className="text-lg flex items-center gap-2">
