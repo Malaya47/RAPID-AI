@@ -169,7 +169,7 @@ export async function generateVideo(
         voice: voice,
         time_limit: timeLimit,
         user_id: userId,
-        font_name: fontName,
+        font_name: `${fontName}-Regular.ttf`,
         base_font_color: baseFontColor,
         highlight_word_color: highlightWordColor,
       }),

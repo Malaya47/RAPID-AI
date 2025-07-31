@@ -1,7 +1,13 @@
 // src/types/video.ts
 
-export type DurationOption = "30-45" | "45-60" | "60-90"
-export type VoiceOption = "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer"
+export type DurationOption = "30-45" | "45-60" | "60-90";
+export type VoiceOption =
+  | "alloy"
+  | "echo"
+  | "fable"
+  | "onyx"
+  | "nova"
+  | "shimmer";
 // export type MusicOption = "BladeRunner" | "Snowfall" | "Another Love" | "Else-Paris"
 
 export interface VideoApiResponse {
@@ -21,69 +27,84 @@ export interface JobStatusResponse {
   error?: string;
 }
 
-
 export interface SharedVideoProps {
-  duration: DurationOption
-  setDuration: (value: DurationOption) => void
-  voice: VoiceOption
-  setVoice: (value: VoiceOption) => void
-  generated: boolean
-  setGenerated: (value: boolean) => void
-  videoUrl: string
-  setVideoUrl: (value: string) => void
-  error: string
-  setError: (value: string) => void
-  loading: boolean
-  setLoading: (value: boolean) => void
+  duration: DurationOption;
+  setDuration: (value: DurationOption) => void;
+  voice: VoiceOption;
+  setVoice: (value: VoiceOption) => void;
+  generated: boolean;
+  setGenerated: (value: boolean) => void;
+  videoUrl: string;
+  setVideoUrl: (value: string) => void;
+  error: string;
+  setError: (value: string) => void;
+  loading: boolean;
+  setLoading: (value: boolean) => void;
 }
 
-export type FontName = "Anton-Regular.ttf" | "Roboto-Regular.ttf" | "OpenSans-Regular.ttf" | "Montserrat-Regular.ttf" | "Poppins-Regular.ttf"
-export type ColorName = "red" | "blue" | "green" | "indigo" | "yellow" | "white" | "black"
+export type FontName =
+  | "Anton"
+  | "Bangers"
+  | "BebasNeue"
+  | "impact"
+  | "Knewave"
+  | "LeagueSpartan"
+  | "Montserrat"
+  | "PoetsenOne"
+  | "Poppins";
+export type ColorName =
+  | "red"
+  | "blue"
+  | "green"
+  | "indigo"
+  | "yellow"
+  | "white"
+  | "black";
 
 export interface VideoFormProps {
-  textareaLabel: string
-  textareaPlaceholder: string
-  textareaValue: string
-  onTextareaChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
-  duration?: DurationOption
-  setDuration?: (value: DurationOption) => void
-  voice?: VoiceOption
-  setVoice?: (value: VoiceOption) => void
-  error?: string
-  onSubmit?: () => void
-  isSubmitDisabled?: boolean
-  loading: boolean
-  title: string
-  description: string
-  fontName: FontName
-  setFontName: (value: FontName) => void
-  fontBaseColor: ColorName
-  setFontBaseColor: (value: ColorName) => void
-  fontHighlightColor: ColorName
-  setFontHighlightColor: (value: ColorName) => void
+  textareaLabel: string;
+  textareaPlaceholder: string;
+  textareaValue: string;
+  onTextareaChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  duration?: DurationOption;
+  setDuration?: (value: DurationOption) => void;
+  voice?: VoiceOption;
+  setVoice?: (value: VoiceOption) => void;
+  error?: string;
+  onSubmit?: () => void;
+  isSubmitDisabled?: boolean;
+  loading: boolean;
+  title: string;
+  description: string;
+  fontName: FontName;
+  setFontName: (value: FontName) => void;
+  fontBaseColor: ColorName;
+  setFontBaseColor: (value: ColorName) => void;
+  fontHighlightColor: ColorName;
+  setFontHighlightColor: (value: ColorName) => void;
 }
 
 export interface VideoPreviewProps {
-  download: string
-  generated: boolean
-  videoUrl: string
-  loading: boolean
-  onRegenerate: () => void
+  download: string;
+  generated: boolean;
+  videoUrl: string;
+  loading: boolean;
+  onRegenerate: () => void;
 }
 
 export interface NarrationApiResponse {
-  script: string
-  title: string
-  title_image_prompt: string
-  [key: string]: any
+  script: string;
+  title: string;
+  title_image_prompt: string;
+  [key: string]: any;
 }
 
 export interface VideoApiResponse {
-  url: string
-  [key: string]: any
+  url: string;
+  [key: string]: any;
 }
 
-export type VideoStatus = 'processing' | 'completed' | 'failed';
+export type VideoStatus = "processing" | "completed" | "failed";
 
 export interface Video {
   id: string;

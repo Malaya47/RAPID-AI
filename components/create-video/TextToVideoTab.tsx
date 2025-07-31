@@ -72,7 +72,7 @@ export default function TextToVideoTab({
   const [isCaptioning, setIsCaptioning] = useState<boolean>(false);
   const [isVideoLoading, setIsVideoLoading] = useState<boolean>(false);
   const [videoGenerationStage, setVideoGenerationStage] = useState<string>("");
-  const [fontName, setFontName] = useState<FontName>("Anton-Regular.ttf");
+  const [fontName, setFontName] = useState<FontName>("Anton");
   const [fontBaseColor, setFontBaseColor] = useState<ColorName>("white");
   const [fontHighlightColor, setFontHighlightColor] =
     useState<ColorName>("indigo");

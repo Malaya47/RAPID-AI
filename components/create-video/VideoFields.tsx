@@ -59,11 +59,15 @@ export default function VideoFields({
   const [playingVoice, setPlayingVoice] = useState<VoiceOption | null>(null);
 
   const fonts: FontName[] = [
-    "Anton-Regular.ttf",
-    "Roboto-Regular.ttf",
-    "OpenSans-Regular.ttf",
-    "Montserrat-Regular.ttf",
-    "Poppins-Regular.ttf",
+    "Anton",
+    "Bangers",
+    "BebasNeue",
+    "impact",
+    "Knewave",
+    "LeagueSpartan",
+    "Montserrat",
+    "PoetsenOne",
+    "Poppins",
   ];
 
   const colors = [
