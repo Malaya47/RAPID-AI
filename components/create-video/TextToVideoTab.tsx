@@ -759,8 +759,7 @@ export default function TextToVideoTab({
             <DrawerFooter>
               <DrawerClose asChild>
                 <Button
-                  // onClick={() => setShowPreviewWarning(true)}
-                  onClick={confirmPreviewClose}
+                  onClick={() => setShowPreviewWarning(true)}
                   className="gap-2 bg-transparent rounded-3xl"
                   variant="outline"
                 >
@@ -772,7 +771,7 @@ export default function TextToVideoTab({
         </DrawerContent>
       </Drawer>
 
-      {/* <Dialog open={showPreviewWarning} onOpenChange={setShowPreviewWarning}>
+      <Dialog open={showPreviewWarning} onOpenChange={setShowPreviewWarning}>
         <DialogContent className="bg-black/20 backdrop-blur-sm text-white border-none shadow-md shadow-indigo-500">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 font-medium">
@@ -780,8 +779,8 @@ export default function TextToVideoTab({
               Warning
             </DialogTitle>
             <DialogDescription className="text-neutral-300">
-              Closing the video preview may result in losing your credits and
-              video progress. Are you sure you want to proceed?
+              If you close the video processing now, you may lose your credits
+              and any progress made. Are you sure you want to proceed?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -803,7 +802,7 @@ export default function TextToVideoTab({
             </div>
           </DialogFooter>
         </DialogContent>
-      </Dialog> */}
+      </Dialog>
 
       {generated && !showPreviewDrawer && (
         <Button
