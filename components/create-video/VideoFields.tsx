@@ -62,13 +62,14 @@ export default function VideoFields({
   const durations: DurationOption[] = ["30-45", "45-60", "60-90"];
   const [showAllVoices, setShowAllVoices] = useState(false);
   const [playingVoice, setPlayingVoice] = useState<VoiceOption | null>(null);
-  const [openBaseFont, setOpenBaseFont] = useState(false); // Add this inside your component
+  const [openBaseFont, setOpenBaseFont] = useState(false);
+  const [highlightOpen, setHighlightOpen] = useState(false);
 
   const fonts: FontName[] = [
     "Anton",
     "Bangers",
     "BebasNeue",
-    "impact",
+    "Impact",
     "Knewave",
     "LeagueSpartan",
     "Montserrat",
@@ -305,32 +306,76 @@ export default function VideoFields({
 
             <div className="space-y-2">
               <Label>Highlight Color</Label>
-              <Select
-                value={fontHighlightColor}
-                onValueChange={(value) =>
-                  setFontHighlightColor(value as ColorName)
-                }
-              >
-                <SelectTrigger className="bg-neutral-900 border-neutral-800">
-                  <SelectValue placeholder="Select highlight color" />
-                </SelectTrigger>
-                <SelectContent className="bg-neutral-900 border-neutral-800">
-                  {colors.map((color) => (
-                    <SelectItem
-                      key={color.color}
-                      value={color.color}
-                      className="hover:bg-neutral-800 text-white"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-4 h-4 rounded-full bg-${color.dotColor}`}
-                        />
-                        <span className="capitalize">{color.color}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+
+              <Popover open={highlightOpen} onOpenChange={setHighlightOpen}>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex items-center justify-between w-full bg-neutral-900 border border-neutral-800 rounded-md px-3 py-2 text-sm"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`
+            w-4 h-4 rounded-full
+            ${fontHighlightColor === "red" ? "bg-red-500" : ""}
+            ${fontHighlightColor === "blue" ? "bg-blue-500" : ""}
+            ${fontHighlightColor === "green" ? "bg-green-500" : ""}
+            ${fontHighlightColor === "indigo" ? "bg-indigo-500" : ""}
+            ${fontHighlightColor === "yellow" ? "bg-yellow-500" : ""}
+            ${fontHighlightColor === "white" ? "bg-white" : ""}
+            ${fontHighlightColor === "black" ? "bg-black" : ""}
+          `}
+                      />
+                      <span className="capitalize text-white">
+                        {fontHighlightColor}
+                      </span>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-white" />
+                  </button>
+                </PopoverTrigger>
+
+                <PopoverContent
+                  side="bottom"
+                  align="start"
+                  className="bg-neutral-900 border border-neutral-700 p-4 rounded-xl"
+                >
+                  <div className="grid grid-cols-4 gap-3">
+                    {colors.map((color) => (
+                      <button
+                        key={color.color}
+                        type="button"
+                        onClick={() => {
+                          setFontHighlightColor(color.color as ColorName);
+                          setHighlightOpen(false); // Close popover on selection
+                        }}
+                        className={`
+              w-6 h-6 rounded-full border-2 hover:scale-110 transition
+              ${
+                fontHighlightColor === color.color
+                  ? "ring-2 ring-indigo-500"
+                  : ""
+              }
+              ${
+                color.color === "red"
+                  ? "bg-red-500"
+                  : color.color === "blue"
+                  ? "bg-blue-500"
+                  : color.color === "green"
+                  ? "bg-green-500"
+                  : color.color === "indigo"
+                  ? "bg-indigo-500"
+                  : color.color === "yellow"
+                  ? "bg-yellow-500"
+                  : color.color === "white"
+                  ? "bg-white"
+                  : "bg-black"
+              }
+            `}
+                      />
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
         </div>
