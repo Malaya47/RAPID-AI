@@ -46,7 +46,7 @@ export type FontName =
   | "Anton"
   | "Bangers"
   | "BebasNeue"
-  | "impact"
+  | "Impact"
   | "Knewave"
   | "LeagueSpartan"
   | "Montserrat"
