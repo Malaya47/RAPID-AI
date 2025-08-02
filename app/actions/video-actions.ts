@@ -41,16 +41,25 @@ async function checkAndDeductCredits(userId: string): Promise<boolean> {
   return true;
 }
 
-export async function storeVideoInSupabase(
-  videoUrl: string,
-  userId: string,
-  duration: string,
-  title?: string,
-  description?: string,
-  fontName?: string,
-  baseFontColor?: string,
-  highlightWordColor?: string
-): Promise<void> {
+export async function storeVideoInSupabase({
+  videoUrl,
+  userId,
+  duration,
+  title,
+  description,
+  fontName,
+  baseFontColor,
+  highlightWordColor,
+}: {
+  videoUrl: string;
+  userId: string;
+  duration: string;
+  title?: string;
+  description?: string;
+  fontName?: string;
+  baseFontColor?: string;
+  highlightWordColor?: string;
+}): Promise<void> {
   const supabase = await createClient();
 
   try {
@@ -59,17 +68,19 @@ export async function storeVideoInSupabase(
 
     const { data, error } = await supabase
       .from("videos")
-      .insert({
-        user_id: userId,
-        video_url: videoUrl,
-        duration,
-        title,
-        description,
-        status: "completed",
-        font_name: fontName,
-        base_font_color: baseFontColor,
-        highlight_word_color: highlightWordColor,
-      })
+      .insert([
+        {
+          user_id: userId,
+          video_url: videoUrl,
+          duration: duration,
+          title: title ?? null,
+          description: description ?? null,
+          status: "completed",
+          font_name: fontName ?? null,
+          base_font_color: baseFontColor ?? null,
+          highlight_word_color: highlightWordColor ?? null,
+        },
+      ] as any)
       .select();
 
     if (error) {
