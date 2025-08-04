@@ -33,23 +33,25 @@ const Hero = () => {
         <div className="space-y-10 relative">
           <motion.h1
             variants={itemVariants}
-            className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6"
+            className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 min-h-[4rem] sm:min-h-[5rem]"
           >
             Transform Text into{" "}
             <span className="bg-gradient-to-r from-indigo-300 to-purple-500 bg-clip-text text-transparent">
-              <Typewriter
-                words={[
-                  "Engaging Videos",
-                  "Captivating Content",
-                  "Stunning Visuals",
-                ]}
-                loop={0} // 0 = infinite
-                cursor
-                cursorStyle="|"
-                typeSpeed={70}
-                deleteSpeed={50}
-                delaySpeed={1500}
-              />
+              <div className="inline-block min-w-[260px] text-left">
+                <Typewriter
+                  words={[
+                    "Engaging Videos",
+                    "Captivating Content",
+                    "Stunning Visuals",
+                  ]}
+                  loop={0} // 0 = infinite
+                  cursor
+                  cursorStyle="|"
+                  typeSpeed={70}
+                  deleteSpeed={50}
+                  delaySpeed={1500}
+                />
+              </div>
             </span>
           </motion.h1>
           <motion.div
