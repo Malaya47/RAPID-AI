@@ -23,6 +23,9 @@ type Video = Database["public"]["Tables"]["videos"]["Row"];
 
 export default function DashboardPage() {
   const [videos, setVideos] = useState<Video[]>([]);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(6); // Load 6 videos per page
+  const [hasMore, setHasMore] = useState(true);
   const [credits, setCredits] = useState<number>(0);
   const [subscription, setSubscription] = useState<UserSubscription | null>(
     null
@@ -31,35 +34,49 @@ export default function DashboardPage() {
   const supabase = createClient();
   const subscriptionService = new SubscriptionService();
 
+  const fetchVideos = async (page: number) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data: videosData, error } = await supabase
+      .from("videos")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    if (error) throw error;
+
+    if (videosData.length < pageSize) {
+      setHasMore(false); // No more videos to load
+    }
+
+    setVideos((prev) => [...prev, ...videosData]);
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
+    const loadInitial = async () => {
       try {
         const {
           data: { user },
         } = await supabase.auth.getUser();
+
         if (!user) return;
-
-        const { data: videosData, error: videosError } = await supabase
-          .from("videos")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false });
-
-        if (videosError) throw videosError;
-        setVideos(videosData || []);
 
         const userSubscription = await subscriptionService.getUserSubscription(
           user.id
         );
         setSubscription(userSubscription);
+        await subscriptionService.syncUserCredits(user.id);
+        setCredits(userSubscription?.credits_remaining || 0);
 
-        if (userSubscription) {
-          await subscriptionService.syncUserCredits(user.id);
-          setCredits(userSubscription.credits_remaining);
-        } else {
-          await subscriptionService.syncUserCredits(user.id);
-          setCredits(0);
-        }
+        await fetchVideos(1); // Load first page
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -67,7 +84,7 @@ export default function DashboardPage() {
       }
     };
 
-    fetchData();
+    loadInitial();
   }, [supabase]);
 
   const VideoStatCard = ({
@@ -278,6 +295,21 @@ export default function DashboardPage() {
             </Card>
           ))}
         </div>
+
+        {hasMore && (
+          <div className="flex justify-center mt-6">
+            <Button
+              onClick={async () => {
+                const nextPage = page + 1;
+                setPage(nextPage);
+                await fetchVideos(nextPage);
+              }}
+              className="bg-indigo-600 text-white hover:bg-indigo-700"
+            >
+              Load More
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* { {subscription && (
