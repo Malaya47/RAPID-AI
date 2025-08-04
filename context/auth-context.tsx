@@ -82,8 +82,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
-    return { error };
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) return { error };
+
+    const userId = data.user?.id;
+
+    if (!userId) {
+      return { error: new Error("User ID not returned after sign-up") };
+    }
+
+    // Insert the new user into the profiles table
+    const { error: profileError } = await supabase.from("profiles").insert({
+      id: userId,
+      total_credits: 0, // Optional: set initial credits if needed
+    });
+
+    return { error: profileError };
   };
 
   const signOut = async () => {
