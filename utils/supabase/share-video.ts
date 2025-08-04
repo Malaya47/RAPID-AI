@@ -14,12 +14,14 @@ export async function generateSlugAndEmail({
 
   const supabase = await createClient();
 
-  const { error } = await supabase.from("video_slugs").insert({
-    slug,
-    s3_url: videoUrl,
-    email: userEmail,
-    created_at: new Date(),
-  });
+  const { error } = await supabase.from("video_slugs").insert([
+    {
+      slug,
+      s3_url: videoUrl,
+      email: userEmail,
+      created_at: new Date(),
+    },
+  ] as any);
 
   if (error) {
     console.error("Failed to save slug mapping:", error);

@@ -1,7 +1,7 @@
 "use client";
 
 import { JSX, useState, useEffect, useRef } from "react";
-import { SharedVideoProps } from "@/types/video";
+// import { SharedVideoProps } from "@/types/video";
 import VideoForm from "./VideoForm";
 import VideoPreview from "./VideoPreview";
 import {
@@ -41,166 +41,236 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { SubscriptionService } from "@/lib/subscription";
 import { io, Socket } from "socket.io-client";
+import { getSocket } from "@/lib/socket";
 import { generateSlugAndEmail } from "@/utils/supabase/share-video";
+import { useVideo } from "@/context/video-context";
 
-export default function TextToVideoTab({
-  duration,
-  setDuration,
-  voice,
-  setVoice,
-  generated,
-  setGenerated,
-  error,
-  setError,
-  loading,
-  setLoading,
-}: SharedVideoProps): JSX.Element {
+export default function TextToVideoTab({}: // duration,
+// setDuration,
+// voice,
+// setVoice,
+// generated,
+// setGenerated,
+// error,
+// setError,
+// loading,
+// setLoading,
+{}): JSX.Element {
   const { user } = useAuth();
   const router = useRouter();
-  const [prompt, setPrompt] = useState<string>("");
-  const [narration, setNarration] = useState<string>("");
-  const [script, setScript] = useState<any | null>(null);
-  const [showNarrationEditor, setShowNarrationEditor] =
-    useState<boolean>(false);
-  const [showNarrationWarning, setShowNarrationWarning] =
-    useState<boolean>(false);
-  const [showPreviewDrawer, setShowPreviewDrawer] = useState<boolean>(false);
-  const [showPreviewWarning, setShowPreviewWarning] = useState<boolean>(false);
-  const [playableVideoUrl, setPlayableVideoUrl] = useState<string>("");
-  const [videoUrl, setVideoUrl] = useState<string>("");
-  const [isRawVideo, setIsRawVideo] = useState<boolean>(false);
-  const [isCaptioning, setIsCaptioning] = useState<boolean>(false);
-  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(false);
-  const [videoGenerationStage, setVideoGenerationStage] = useState<string>("");
-  const [fontName, setFontName] = useState<FontName>("Anton");
-  const [fontBaseColor, setFontBaseColor] = useState<ColorName>("white");
-  const [fontHighlightColor, setFontHighlightColor] =
-    useState<ColorName>("indigo");
   const { toast } = useToast();
+  // const [prompt, setPrompt] = useState<string>("");
+  // const [narration, setNarration] = useState<string>("");
+  // const [script, setScript] = useState<any | null>(null);
+  // const [showNarrationEditor, setShowNarrationEditor] =
+  //   useState<boolean>(false);
+  // const [showNarrationWarning, setShowNarrationWarning] =
+  //   useState<boolean>(false);
+  // const [showPreviewDrawer, setShowPreviewDrawer] = useState<boolean>(false);
+  // const [showPreviewWarning, setShowPreviewWarning] = useState<boolean>(false);
+  // const [playableVideoUrl, setPlayableVideoUrl] = useState<string>("");
+  // const [videoUrl, setVideoUrl] = useState<string>("");
+  // const [isRawVideo, setIsRawVideo] = useState<boolean>(false);
+  // const [isCaptioning, setIsCaptioning] = useState<boolean>(false);
+  // const [isVideoLoading, setIsVideoLoading] = useState<boolean>(false);
+  // const [videoGenerationStage, setVideoGenerationStage] = useState<string>("");
+  // const [fontName, setFontName] = useState<FontName>("Anton");
+  // const [fontBaseColor, setFontBaseColor] = useState<ColorName>("white");
+  // const [fontHighlightColor, setFontHighlightColor] =
+  //   useState<ColorName>("indigo");
+  // const { toast } = useToast();
   const subscriptionService = new SubscriptionService();
   const [credits, setCredits] = useState<number | null>(null);
-  const [videoStored, setVideoStored] = useState<boolean>(false);
-  const [isGeneratingNarration, setIsGeneratingNarration] =
-    useState<boolean>(false);
-  const [isGeneratingViralNarration, setIsGeneratingViralNarration] =
-    useState<boolean>(false);
+  // const [videoStored, setVideoStored] = useState<boolean>(false);
+  // const [isGeneratingNarration, setIsGeneratingNarration] =
+  //   useState<boolean>(false);
+  // const [isGeneratingViralNarration, setIsGeneratingViralNarration] =
+  //   useState<boolean>(false);
+
+  // Use video context instead of local state
+  const {
+    // State
+    prompt,
+    narration,
+    script,
+    duration,
+    voice,
+    generated,
+    error,
+    loading,
+    showNarrationEditor,
+    showNarrationWarning,
+    showPreviewDrawer,
+    showPreviewWarning,
+    playableVideoUrl,
+    videoUrl,
+    slug,
+    isRawVideo,
+    isCaptioning,
+    isVideoLoading,
+    videoGenerationStage,
+    fontName,
+    fontBaseColor,
+    fontHighlightColor,
+    videoStored,
+    isGeneratingNarration,
+    isGeneratingViralNarration,
+    currentProgress,
+    currentJobId,
+
+    // Setters
+    setPrompt,
+    setNarration,
+    setScript,
+    setDuration,
+    setVoice,
+    setGenerated,
+    setError,
+    setLoading,
+    setShowNarrationEditor,
+    setShowNarrationWarning,
+    setShowPreviewDrawer,
+    setShowPreviewWarning,
+    setPlayableVideoUrl,
+    setVideoUrl,
+    setIsRawVideo,
+    setIsCaptioning,
+    setIsVideoLoading,
+    setVideoGenerationStage,
+    setFontName,
+    setFontBaseColor,
+    setFontHighlightColor,
+    setVideoStored,
+    setIsGeneratingNarration,
+    setIsGeneratingViralNarration,
+    setCurrentProgress,
+    setCurrentJobId,
+
+    // Utility functions
+    clearError,
+  } = useVideo();
+
+  // make slug url
+  const slugUrl = slug ? `https://aigenreels.com/api/video/${slug}` : "";
 
   // Socket.IO references
-  const socket = useRef<Socket | null>(null);
-  const currentJobId = useRef<string>("");
-  const storedJobId = useRef<string>(""); // Track which job has been stored
+  const socket = useRef<ReturnType<typeof getSocket>>(getSocket());
+  // const currentJobId = useRef<string>("");
+  //const storedJobId = useRef<string>(""); // Track which job has been stored
 
-  const [currentProgress, setCurrentProgress] = useState(0);
+  // const [currentProgress, setCurrentProgress] = useState(0);
 
-  const totalDurationInSeconds = 360; // 6 minutes
-  const maxSimulatedProgress = 98;
-  const progressIncrement = maxSimulatedProgress / totalDurationInSeconds;
+  //const totalDurationInSeconds = 360; // 6 minutes
+  //const maxSimulatedProgress = 98;
+  //const progressIncrement = maxSimulatedProgress / totalDurationInSeconds;
 
   // Initialize Socket.IO connection on mount
-  useEffect(() => {
-    // Initialize socket connection
-    socket.current = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, {
-      transports: ["websocket"],
-      autoConnect: true,
-    });
+  // useEffect(() => {
+  //   // // Initialize socket connection
+  //   // socket.current = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, {
+  //   //   transports: ["websocket"],
+  //   //   autoConnect: true,
+  //   // });
 
-    // Listen for job status updates
-    socket.current.on(
-      "job_status_update",
-      (data: {
-        status: string;
-        raw_video_url?: string;
-        captioned_video_url?: string;
-        job_id: string;
-      }) => {
-        console.log("Socket job status update:", data);
+  //   socket.current.off("job_status_update"); // clean before setting
 
-        // Only process updates for the current job
-        if (data.job_id !== currentJobId.current) {
-          return;
-        }
+  //   // Listen for job status updates
+  //   socket.current.on(
+  //     "job_status_update",
+  //     (data: {
+  //       status: string;
+  //       raw_video_url?: string;
+  //       captioned_video_url?: string;
+  //       job_id: string;
+  //     }) => {
+  //       console.log("Socket job status update:", data);
 
-        // Update generation stage
-        setVideoGenerationStage(`Status: ${data.status}`);
+  //       // Only process updates for the current job
+  //       if (data.job_id !== currentJobId.current) {
+  //         return;
+  //       }
 
-        // Handle raw video URL
-        if (data.raw_video_url) {
-          console.log("Raw video URL received via socket:", data.raw_video_url);
-          setVideoUrl(data.raw_video_url);
-          setPlayableVideoUrl(data.raw_video_url);
-          setIsRawVideo(true);
-          setLoading(false);
+  //       // Update generation stage
+  //       setVideoGenerationStage(`Status: ${data.status}`);
 
-          setGenerated(true);
+  //       // Handle raw video URL
+  //       if (data.raw_video_url) {
+  //         console.log("Raw video URL received via socket:", data.raw_video_url);
+  //         setVideoUrl(data.raw_video_url);
+  //         setPlayableVideoUrl(data.raw_video_url);
+  //         setIsRawVideo(true);
+  //         setLoading(false);
 
-          setVideoGenerationStage("Raw video ready");
+  //         setGenerated(true);
 
-          // Start captioning process
-          setIsCaptioning(true);
-          setVideoGenerationStage("Adding captions...");
-        }
+  //         setVideoGenerationStage("Raw video ready");
 
-        // Handle captioned video URL (final result)
-        if (data.captioned_video_url) {
-          console.log(
-            "Captioned video URL received via socket:",
-            data.captioned_video_url
-          );
-          setVideoUrl(data.captioned_video_url);
-          setPlayableVideoUrl(data.captioned_video_url);
-          setIsRawVideo(false);
-          setIsCaptioning(false);
-          setIsVideoLoading(false);
-          setVideoGenerationStage("Captioned video ready");
-          setCurrentProgress(100);
+  //         // Start captioning process
+  //         setIsCaptioning(true);
+  //         setVideoGenerationStage("Adding captions...");
+  //       }
 
-          // Mark as generated only when captioned video is ready
-          setGenerated(true);
-        }
+  //       // Handle captioned video URL (final result)
+  //       if (data.captioned_video_url) {
+  //         console.log(
+  //           "Captioned video URL received via socket:",
+  //           data.captioned_video_url
+  //         );
+  //         setVideoUrl(data.captioned_video_url);
+  //         setPlayableVideoUrl(data.captioned_video_url);
+  //         setIsRawVideo(false);
+  //         setIsCaptioning(false);
+  //         setIsVideoLoading(false);
+  //         setVideoGenerationStage("Captioned video ready");
+  //         setCurrentProgress(100);
 
-        // Handle completion or error states
-        if (
-          data.status === "completed" ||
-          data.status === "failed" ||
-          data.status === "error"
-        ) {
-          setLoading(false);
-          setIsVideoLoading(false);
-          setIsCaptioning(false);
+  //         // Mark as generated only when captioned video is ready
+  //         setGenerated(true);
+  //       }
 
-          if (data.status === "failed" || data.status === "error") {
-            setError("Video generation failed. Please try again.");
-            toast({
-              title: "Video generation failed",
-              description:
-                "Try again, there might be an issue in generating video. Your credit will not be deducted.",
-              variant: "destructive",
-            });
-          }
-        }
-      }
-    );
+  //       // Handle completion or error states
+  //       if (
+  //         data.status === "completed" ||
+  //         data.status === "failed" ||
+  //         data.status === "error"
+  //       ) {
+  //         setLoading(false);
+  //         setIsVideoLoading(false);
+  //         setIsCaptioning(false);
 
-    // Handle socket connection events
-    socket.current.on("connect", () => {
-      console.log("Socket connected:", socket.current?.id);
-    });
+  //         if (data.status === "failed" || data.status === "error") {
+  //           setError("Video generation failed. Please try again.");
+  //           toast({
+  //             title: "Video generation failed",
+  //             description:
+  //               "Try again, there might be an issue in generating video. Your credit will not be deducted.",
+  //             variant: "destructive",
+  //           });
+  //         }
+  //       }
+  //     }
+  //   );
 
-    socket.current.on("disconnect", () => {
-      console.log("Socket disconnected");
-    });
+  //   // // Handle socket connection events
+  //   // socket.current.on("connect", () => {
+  //   //   console.log("Socket connected:", socket.current?.id);
+  //   // });
 
-    socket.current.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-    });
+  //   // socket.current.on("disconnect", () => {
+  //   //   console.log("Socket disconnected");
+  //   // });
 
-    // Cleanup on unmount
-    return () => {
-      if (socket.current) {
-        socket.current.disconnect();
-      }
-    };
-  }, []);
+  //   // socket.current.on("connect_error", (error) => {
+  //   //   console.error("Socket connection error:", error);
+  //   // });
+
+  //   // Cleanup on unmount
+  //   // return () => {
+  //   //   if (socket.current) {
+  //   //     socket.current.disconnect();
+  //   //   }
+  //   // };
+  // }, []);
 
   // Fetch credits on mount
   useEffect(() => {
@@ -216,28 +286,28 @@ export default function TextToVideoTab({
     fetchCredits();
   }, [user]);
 
-  useEffect(() => {
-    if (!loading) return;
+  // useEffect(() => {
+  //   if (!loading) return;
 
-    let progress = 0;
+  //   let progress = 0;
 
-    const interval = setInterval(() => {
-      progress += progressIncrement;
-      if (progress >= maxSimulatedProgress) {
-        progress = maxSimulatedProgress;
-        clearInterval(interval);
-      }
-      setCurrentProgress(Math.floor(progress));
-    }, 1000); // Update every 1 second
+  //   const interval = setInterval(() => {
+  //     progress += progressIncrement;
+  //     if (progress >= maxSimulatedProgress) {
+  //       progress = maxSimulatedProgress;
+  //       clearInterval(interval);
+  //     }
+  //     setCurrentProgress(Math.floor(progress));
+  //   }, 1000); // Update every 1 second
 
-    return () => clearInterval(interval);
-  }, [loading]);
+  //   return () => clearInterval(interval);
+  // }, [loading]);
 
-  useEffect(() => {
-    if (generated && !loading) {
-      setCurrentProgress(100);
-    }
-  }, [generated, loading]);
+  // useEffect(() => {
+  //   if (generated && !loading) {
+  //     setCurrentProgress(100);
+  //   }
+  // }, [generated, loading]);
 
   const handleGenerateNarration = async (): Promise<void> => {
     if (!prompt) return;
@@ -258,7 +328,7 @@ export default function TextToVideoTab({
         }`
       );
     } finally {
-      setIsGeneratingNarration(true);
+      setIsGeneratingNarration(false);
     }
   };
 
@@ -302,7 +372,7 @@ export default function TextToVideoTab({
     setError("");
     setGenerated(false);
     setVideoStored(false); // RESET STORAGE FLAG
-    storedJobId.current = ""; // Reset stored job ID for new generation
+    // storedJobId.current = ""; // Reset stored job ID for new generation
     setShowNarrationEditor(false);
     setIsRawVideo(false);
     setIsCaptioning(false);
@@ -329,7 +399,9 @@ export default function TextToVideoTab({
       );
 
       console.log("Video generation job created:", jobId);
-      currentJobId.current = jobId;
+
+      // Set current job ID
+      setCurrentJobId(jobId);
 
       // Emit watch_job event to start watching for updates
       if (socket.current && socket.current.connected) {
@@ -384,113 +456,113 @@ export default function TextToVideoTab({
       );
       setLoading(false);
       setIsVideoLoading(false);
-      currentJobId.current = "";
+      setCurrentJobId("");
     }
   };
 
   // Handle storing video when final URL is available
-  useEffect(() => {
-    const storeVideo = async () => {
-      console.log("storeVideo useEffect triggered with:", {
-        videoUrl: videoUrl,
-        isRawVideo,
-        hasUser: !!user,
-        generated,
-        videoGenerationStage,
-        videoStored,
-        currentJobId: currentJobId.current,
-        storedJobId: storedJobId.current,
-      });
+  // useEffect(() => {
+  //   const storeVideo = async () => {
+  //     console.log("storeVideo useEffect triggered with:", {
+  //       videoUrl: videoUrl,
+  //       isRawVideo,
+  //       hasUser: !!user,
+  //       generated,
+  //       videoGenerationStage,
+  //       videoStored,
+  //       currentJobId: currentJobId.current,
+  //       storedJobId: storedJobId.current,
+  //     });
 
-      // Only store CAPTIONED videos (final processed videos with captions)
-      // Skip if:
-      // 1. No video URL
-      // 2. It's a raw video (not captioned yet)
-      // 3. No user
-      // 4. Not marked as generated (final)
-      // 5. Not in "Captioned video ready" stage
-      // 6. Already stored
-      // 7. No current job ID
-      // 8. Already stored this specific job
-      if (
-        !videoUrl ||
-        isRawVideo || // IMPORTANT: Skip raw videos, only store captioned videos
-        !user ||
-        !generated || // Only store when finally generated (set to true only for captioned videos)
-        videoGenerationStage !== "Captioned video ready" || // Only store when captions are done
-        videoStored ||
-        !currentJobId.current ||
-        storedJobId.current === currentJobId.current
-      ) {
-        console.log(
-          "Skipping video storage - waiting for captioned video or already stored"
-        );
-        return;
-      }
+  //     // Only store CAPTIONED videos (final processed videos with captions)
+  //     // Skip if:
+  //     // 1. No video URL
+  //     // 2. It's a raw video (not captioned yet)
+  //     // 3. No user
+  //     // 4. Not marked as generated (final)
+  //     // 5. Not in "Captioned video ready" stage
+  //     // 6. Already stored
+  //     // 7. No current job ID
+  //     // 8. Already stored this specific job
+  //     if (
+  //       !videoUrl ||
+  //       isRawVideo || // IMPORTANT: Skip raw videos, only store captioned videos
+  //       !user ||
+  //       !generated || // Only store when finally generated (set to true only for captioned videos)
+  //       videoGenerationStage !== "Captioned video ready" || // Only store when captions are done
+  //       videoStored ||
+  //       !currentJobId.current ||
+  //       storedJobId.current === currentJobId.current
+  //     ) {
+  //       console.log(
+  //         "Skipping video storage - waiting for captioned video or already stored"
+  //       );
+  //       return;
+  //     }
 
-      console.log("Storing CAPTIONED video for job:", currentJobId.current);
+  //     console.log("Storing CAPTIONED video for job:", currentJobId.current);
 
-      try {
-        setVideoGenerationStage("Saving captioned video to database...");
-        setVideoStored(true);
-        storedJobId.current = currentJobId.current;
+  //     try {
+  //       setVideoGenerationStage("Saving captioned video to database...");
+  //       setVideoStored(true);
+  //       storedJobId.current = currentJobId.current;
 
-        await storeVideoInSupabase(
-          videoUrl, // This will be the captioned video URL
-          user.id,
-          duration,
-          prompt,
-          narration
-        );
-        console.log(
-          "Captioned video stored in Supabase successfully for job:",
-          currentJobId.current
-        );
-        // ✅ NEW: Generate slug + send email
-        const slug = await generateSlugAndEmail({
-          videoUrl,
-          userEmail: user.email ?? "",
-        });
+  //       await storeVideoInSupabase(
+  //         videoUrl, // This will be the captioned video URL
+  //         user.id,
+  //         duration,
+  //         prompt,
+  //         narration
+  //       );
+  //       console.log(
+  //         "Captioned video stored in Supabase successfully for job:",
+  //         currentJobId.current
+  //       );
+  //       // ✅ NEW: Generate slug + send email
+  //       const slug = await generateSlugAndEmail({
+  //         videoUrl,
+  //         userEmail: user.email ?? "",
+  //       });
 
-        if (slug) {
-          console.log("Slug generated and email sent:", slug);
-        } else {
-          console.warn("Slug or email failed");
-        }
-        setVideoGenerationStage("Captioned video saved successfully");
-        currentJobId.current = "";
-      } catch (storeErr) {
-        console.error("Error storing captioned video in Supabase:", storeErr);
-        setVideoStored(false);
-        storedJobId.current = "";
+  //       if (slug) {
+  //         console.log("Slug generated and email sent:", slug);
+  //       } else {
+  //         console.warn("Slug or email failed");
+  //       }
+  //       setVideoGenerationStage("Captioned video saved successfully");
+  //       currentJobId.current = "";
+  //     } catch (storeErr) {
+  //       console.error("Error storing captioned video in Supabase:", storeErr);
+  //       setVideoStored(false);
+  //       storedJobId.current = "";
 
-        if (
-          storeErr instanceof Error &&
-          storeErr.message === "Insufficient credits"
-        ) {
-          setError(
-            "You don't have enough credits to generate this video. Please purchase more credits."
-          );
-          router.push("/pricing");
-        } else {
-          setError(
-            `Captioned video generated but failed to save: ${
-              storeErr instanceof Error ? storeErr.message : "Unknown error"
-            }`
-          );
-        }
-      }
-    };
+  //       if (
+  //         storeErr instanceof Error &&
+  //         storeErr.message === "Insufficient credits"
+  //       ) {
+  //         setError(
+  //           "You don't have enough credits to generate this video. Please purchase more credits."
+  //         );
+  //         router.push("/pricing");
+  //       } else {
+  //         setError(
+  //           `Captioned video generated but failed to save: ${
+  //             storeErr instanceof Error ? storeErr.message : "Unknown error"
+  //           }`
+  //         );
+  //       }
+  //     }
+  //   };
 
-    storeVideo();
-  }, [
-    videoUrl,
-    isRawVideo,
-    user?.id,
-    generated,
-    videoGenerationStage,
-    videoStored,
-  ]);
+  //   storeVideo();
+  // }, [
+  //   videoUrl,
+  //   isRawVideo,
+  //   user?.id,
+  //   generated,
+  //   videoGenerationStage,
+  //   videoStored,
+  // ]);
 
   const handleNarrationDialogClose = (open: boolean) => {
     if (!open && showNarrationEditor) {
@@ -522,7 +594,7 @@ export default function TextToVideoTab({
             textareaLabel="Prompt"
             textareaPlaceholder="A cinematic shot of a futuristic city with flying cars and neon lights..."
             textareaValue={prompt}
-            onTextareaChange={(e) => setPrompt(e.target.value)}
+            onTextareaChange={(e: any) => setPrompt(e.target.value)}
             duration={duration}
             setDuration={setDuration}
             voice={voice}
@@ -734,7 +806,8 @@ export default function TextToVideoTab({
             <div className="p-4 flex flex-col items-center justify-end">
               {videoUrl ? (
                 <VideoPreview
-                  download={playableVideoUrl}
+                  // download={playableVideoUrl}
+                  download={slugUrl}
                   generated={generated}
                   videoUrl={videoUrl}
                   loading={loading}

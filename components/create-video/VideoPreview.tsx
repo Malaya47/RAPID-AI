@@ -51,21 +51,17 @@ export default function VideoPreview({
               <RotateCcw className="h-4 w-4" />
               Regenerate
             </Button>
-            <Button
-              asChild
-              className="rounded-full gap-2 bg-green-600 hover:bg-green-700"
-              disabled={loading || !download}
-            >
-              <a
-                href={download}
-                download="generated-video.mp4"
-                target="_blank"
-                rel="noopener noreferrer"
+            {!isRawVideo && !isCaptioning && download && (
+              <Button
+                asChild
+                className="rounded-full gap-2 bg-green-600 hover:bg-green-700"
               >
-                <Download className="h-4 w-4" />
-                Download
-              </a>
-            </Button>
+                <a href={download} download="generated-video.mp4">
+                  <Download className="h-4 w-4" />
+                  Download
+                </a>
+              </Button>
+            )}
           </div>
         </>
       ) : loading ? (

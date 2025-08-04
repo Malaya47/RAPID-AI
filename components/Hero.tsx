@@ -57,7 +57,7 @@ const Hero = () => {
             className="relative px-5 md:max-w-7xl xl:w-full min-h-screen mx-auto z-10"
           >
             {/* shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)] shadow-indigo-500 */}
-            <Image
+            {/* <Image
               className="md:block hidden w-full rounded-3xl"
               src="images/createVideo.png"
               width={100}
@@ -71,7 +71,7 @@ const Hero = () => {
               width={100}
               height={100}
               alt="Create Video"
-            />
+            /> */}
           </motion.div>
           <motion.div
             variants={itemVariants}

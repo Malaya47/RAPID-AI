@@ -28,6 +28,8 @@ interface VideoState {
   videoUrl: string;
   playableVideoUrl: string;
   isRawVideo: boolean;
+  thumbnailUrl: string;
+  slug: string;
 
   // Loading and Generation States
   loading: boolean;
@@ -68,6 +70,8 @@ interface VideoContextType extends VideoState {
   setVideoUrl: (url: string) => void;
   setPlayableVideoUrl: (url: string) => void;
   setIsRawVideo: (isRaw: boolean) => void;
+  setThumbnailUrl: (thumbnailUrl: string) => void;
+  setSlug: (slug: string) => void;
   setLoading: (loading: boolean) => void;
   setGenerated: (generated: boolean) => void;
   setError: (error: string) => void;
@@ -104,6 +108,8 @@ const initialVideoState: VideoState = {
   videoUrl: "",
   playableVideoUrl: "",
   isRawVideo: false,
+  thumbnailUrl: "",
+  slug: "",
   loading: false,
   generated: false,
   error: "",
@@ -193,6 +199,14 @@ export function VideoProvider({ children }: VideoProviderProps) {
             generated: true,
             videoGenerationStage: "Raw video ready",
             isCaptioning: true,
+          }));
+        }
+
+        // Handle thumbnail URL
+        if (data.thumbnail_url) {
+          setState((prev) => ({
+            ...prev,
+            thumbnailUrl: data.thumbnail_url ?? "",
           }));
         }
 
@@ -331,13 +345,17 @@ export function VideoProvider({ children }: VideoProviderProps) {
 
         storedJobId.current = state.currentJobId;
 
-        await storeVideoInSupabase(
-          state.videoUrl,
-          user.id,
-          state.duration,
-          state.prompt,
-          state.narration
-        );
+        await storeVideoInSupabase({
+          videoUrl: state.videoUrl,
+          userId: user.id,
+          duration: state.duration,
+          title: state.prompt,
+          description: state.narration,
+          fontName: state.fontName,
+          baseFontColor: state.fontBaseColor,
+          highlightWordColor: state.fontHighlightColor,
+          thumbnailUrl: state.thumbnailUrl,
+        });
 
         console.log(
           "Captioned video stored in Supabase successfully for job:",
@@ -352,6 +370,7 @@ export function VideoProvider({ children }: VideoProviderProps) {
 
         if (slug) {
           console.log("Slug generated and email sent:", slug);
+          setSlug(slug);
         } else {
           console.warn("Slug or email failed");
         }
@@ -408,6 +427,9 @@ export function VideoProvider({ children }: VideoProviderProps) {
     setState((prev) => ({ ...prev, playableVideoUrl }));
   const setIsRawVideo = (isRawVideo: boolean) =>
     setState((prev) => ({ ...prev, isRawVideo }));
+  const setThumbnailUrl = (thumbnailUrl: string) =>
+    setState((prev) => ({ ...prev, thumbnailUrl }));
+  const setSlug = (slug: string) => setState((prev) => ({ ...prev, slug }));
   const setLoading = (loading: boolean) =>
     setState((prev) => ({ ...prev, loading }));
   const setGenerated = (generated: boolean) =>
@@ -487,6 +509,8 @@ export function VideoProvider({ children }: VideoProviderProps) {
     setVideoUrl,
     setPlayableVideoUrl,
     setIsRawVideo,
+    setThumbnailUrl,
+    setSlug,
     setLoading,
     setGenerated,
     setError,

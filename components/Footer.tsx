@@ -90,14 +90,6 @@ const Footer = () => {
                   href="#"
                   className="text-neutral-400 hover:text-indigo-400"
                 >
-                  Documentation
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="text-neutral-400 hover:text-indigo-400"
-                >
                   Blog
                 </Link>
               </li>
@@ -107,14 +99,6 @@ const Footer = () => {
                   className="text-neutral-400 hover:text-indigo-400"
                 >
                   Support Center
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="text-neutral-400 hover:text-indigo-400"
-                >
-                  API Reference
                 </Link>
               </li>
             </ul>

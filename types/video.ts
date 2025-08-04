@@ -1,6 +1,6 @@
 // src/types/video.ts
 
-export type DurationOption = "30-45" | "45-60" | "60-90";
+// export type DurationOption = "30-45" | "45-60" | "60-90";
 export type VoiceOption =
   | "alloy"
   | "echo"
@@ -27,20 +27,20 @@ export interface JobStatusResponse {
   error?: string;
 }
 
-export interface SharedVideoProps {
-  duration: DurationOption;
-  setDuration: (value: DurationOption) => void;
-  voice: VoiceOption;
-  setVoice: (value: VoiceOption) => void;
-  generated: boolean;
-  setGenerated: (value: boolean) => void;
-  videoUrl: string;
-  setVideoUrl: (value: string) => void;
-  error: string;
-  setError: (value: string) => void;
-  loading: boolean;
-  setLoading: (value: boolean) => void;
-}
+// export interface SharedVideoProps {
+//   duration: DurationOption;
+//   setDuration: (value: DurationOption) => void;
+//   voice: VoiceOption;
+//   setVoice: (value: VoiceOption) => void;
+//   generated: boolean;
+//   setGenerated: (value: boolean) => void;
+//   videoUrl: string;
+//   setVideoUrl: (value: string) => void;
+//   error: string;
+//   setError: (value: string) => void;
+//   loading: boolean;
+//   setLoading: (value: boolean) => void;
+// }
 
 export type FontName =
   | "Anton"
@@ -61,28 +61,28 @@ export type ColorName =
   | "white"
   | "black";
 
-export interface VideoFormProps {
-  textareaLabel: string;
-  textareaPlaceholder: string;
-  textareaValue: string;
-  onTextareaChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  duration?: DurationOption;
-  setDuration?: (value: DurationOption) => void;
-  voice?: VoiceOption;
-  setVoice?: (value: VoiceOption) => void;
-  error?: string;
-  onSubmit?: () => void;
-  isSubmitDisabled?: boolean;
-  loading: boolean;
-  title: string;
-  description: string;
-  fontName: FontName;
-  setFontName: (value: FontName) => void;
-  fontBaseColor: ColorName;
-  setFontBaseColor: (value: ColorName) => void;
-  fontHighlightColor: ColorName;
-  setFontHighlightColor: (value: ColorName) => void;
-}
+// export interface VideoFormProps {
+//   textareaLabel: string;
+//   textareaPlaceholder: string;
+//   textareaValue: string;
+//   onTextareaChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+//   duration?: DurationOption;
+//   setDuration?: (value: DurationOption) => void;
+//   voice?: VoiceOption;
+//   setVoice?: (value: VoiceOption) => void;
+//   error?: string;
+//   onSubmit?: () => void;
+//   isSubmitDisabled?: boolean;
+//   loading: boolean;
+//   title: string;
+//   description: string;
+//   fontName: FontName;
+//   setFontName: (value: FontName) => void;
+//   fontBaseColor: ColorName;
+//   setFontBaseColor: (value: ColorName) => void;
+//   fontHighlightColor: ColorName;
+//   setFontHighlightColor: (value: ColorName) => void;
+// }
 
 export interface VideoPreviewProps {
   download: string;
