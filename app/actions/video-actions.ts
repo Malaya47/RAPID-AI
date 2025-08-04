@@ -50,6 +50,7 @@ export async function storeVideoInSupabase({
   fontName,
   baseFontColor,
   highlightWordColor,
+  thumbnailUrl,
 }: {
   videoUrl: string;
   userId: string;
@@ -59,6 +60,7 @@ export async function storeVideoInSupabase({
   fontName?: string;
   baseFontColor?: string;
   highlightWordColor?: string;
+  thumbnailUrl?: string;
 }): Promise<void> {
   const supabase = await createClient();
 
@@ -79,6 +81,7 @@ export async function storeVideoInSupabase({
           font_name: fontName ?? null,
           base_font_color: baseFontColor ?? null,
           highlight_word_color: highlightWordColor ?? null,
+          thumbnail_url: thumbnailUrl ?? null,
         },
       ] as any)
       .select();
