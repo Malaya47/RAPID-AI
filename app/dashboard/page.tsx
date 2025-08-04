@@ -57,7 +57,11 @@ export default function DashboardPage() {
       setHasMore(false); // No more videos to load
     }
 
-    setVideos((prev) => [...prev, ...videosData]);
+    setVideos((prev) => {
+      const existingIds = new Set(prev.map((v) => v.id));
+      const newVideos = videosData.filter((v) => !existingIds.has(v.id));
+      return [...prev, ...newVideos];
+    });
   };
 
   useEffect(() => {
@@ -274,26 +278,28 @@ export default function DashboardPage() {
       <div className="mt-8">
         <h3 className="text-xl font-semibold mb-4">Your Videos</h3>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {videos.map((video) => (
-            <Card
-              key={video.id}
-              className="overflow-hidden border-none shadow-lg shadow-indigo-500 hover:scale-[1.01] transition-transform duration-200"
-            >
-              <div className="aspect-square bg-neutral-950 border-none">
-                <video
-                  src={video.video_url}
-                  poster={video.thumbnail_url || undefined}
-                  className="h-full w-full object-contain aspect-auto"
-                  controls
-                />
-              </div>
-              <CardHeader className="bg-neutral-950 text-white h-full">
-                <CardTitle className="text-lg">
-                  {video.title || "Untitled Video"}
-                </CardTitle>
-              </CardHeader>
-            </Card>
-          ))}
+          {videos.map((video) =>
+            video.id ? (
+              <Card
+                key={video.id}
+                className="overflow-hidden border-none shadow-lg shadow-indigo-500 hover:scale-[1.01] transition-transform duration-200"
+              >
+                <div className="aspect-square bg-neutral-950 border-none">
+                  <video
+                    src={video.video_url}
+                    poster={video.thumbnail_url || undefined}
+                    className="h-full w-full object-contain aspect-auto"
+                    controls
+                  />
+                </div>
+                <CardHeader className="bg-neutral-950 text-white h-full">
+                  <CardTitle className="text-lg">
+                    {video.title || "Untitled Video"}
+                  </CardTitle>
+                </CardHeader>
+              </Card>
+            ) : null
+          )}
         </div>
 
         {hasMore && (
