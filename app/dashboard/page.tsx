@@ -232,6 +232,7 @@ export default function DashboardPage() {
                     <div className="aspect-[3/4] bg-neutral-950 border rounded-md overflow-hidden mb-2 shadow">
                       <video
                         src={video.video_url}
+                        poster={video.thumbnail_url || undefined}
                         className="h-full w-full object-cover"
                         controls={false}
                       />
@@ -264,6 +265,7 @@ export default function DashboardPage() {
               <div className="aspect-square bg-neutral-950 border-none">
                 <video
                   src={video.video_url}
+                  poster={video.thumbnail_url || undefined}
                   className="h-full w-full object-contain aspect-auto"
                   controls
                 />
