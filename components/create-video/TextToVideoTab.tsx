@@ -639,60 +639,62 @@ export default function TextToVideoTab({}: // duration,
         </div>
       </div>
 
-      <div>
-        <Example />
+      <div className="flex flex-col md:flex-col gap-6">
+        {narration && !showNarrationEditor && !generated ? (
+          <div className="rounded-full w-fit mx-auto col-span-2">
+            <Button
+              disabled={loading || !narration}
+              className="rounded-full p-4 bg-green-600 shadow-sm shadow-neutral-500 animate-pulse"
+              onClick={() => setShowNarrationEditor(true)}
+            >
+              <Video className="h-5 w-5" />
+              <span className="ml-2">Reopen Narration</span>
+            </Button>
+          </div>
+        ) : (
+          <div className="flex flex-wrap justify-center gap-4 w-full">
+            <Button
+              onClick={handleGenerateNarration}
+              disabled={!prompt || loading}
+              className="w-fit gap-2 me-4 bg-indigo-600 hover:bg-indigo-700 rounded-3xl"
+            >
+              {isGeneratingNarration ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Wand2 className="h-4 w-4" />
+                  Generate Narration
+                </>
+              )}
+            </Button>
+
+            <Button
+              onClick={handleGenerateViralNarration}
+              disabled={!prompt || loading}
+              className="w-fit gap-2 bg-indigo-600 hover:bg-indigo-700 rounded-3xl"
+            >
+              {isGeneratingViralNarration ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Wand2 className="h-4 w-4" />
+                  Viral Narration
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+
+        <div>
+          <Example />
+        </div>
       </div>
-
-      {narration && !showNarrationEditor && !generated ? (
-        <div className="rounded-full w-fit mx-auto col-span-2">
-          <Button
-            disabled={loading || !narration}
-            className="rounded-full p-4 bg-green-600 shadow-sm shadow-neutral-500 animate-pulse"
-            onClick={() => setShowNarrationEditor(true)}
-          >
-            <Video className="h-5 w-5" />
-            <span className="ml-2">Reopen Narration</span>
-          </Button>
-        </div>
-      ) : (
-        <div className="rounded-full w-fit mx-auto col-span-2">
-          <Button
-            onClick={handleGenerateNarration}
-            disabled={!prompt || loading}
-            className="w-fit gap-2 me-4 bg-indigo-600 hover:bg-indigo-700 rounded-3xl"
-          >
-            {isGeneratingNarration ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Wand2 className="h-4 w-4" />
-                Generate Narration
-              </>
-            )}
-          </Button>
-
-          <Button
-            onClick={handleGenerateViralNarration}
-            disabled={!prompt || loading}
-            className="w-fit gap-2 bg-indigo-600 hover:bg-indigo-700 rounded-3xl"
-          >
-            {isGeneratingViralNarration ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Wand2 className="h-4 w-4" />
-                Viral Narration
-              </>
-            )}
-          </Button>
-        </div>
-      )}
 
       <Dialog
         open={showNarrationEditor}

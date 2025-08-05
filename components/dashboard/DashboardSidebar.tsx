@@ -84,7 +84,11 @@ export function DashboardSidebar({ className }: SidebarProps) {
             <SidebarMenu className="space-y-3 py-5">
               {sidebarItems.map((item, index) => (
                 <SidebarMenuButton
-                  onClick={toggleSidebar}
+                  onClick={() => {
+                    if (window.innerWidth < 768) {
+                      toggleSidebar();
+                    }
+                  }}
                   key={index}
                   asChild
                   className={cn(
