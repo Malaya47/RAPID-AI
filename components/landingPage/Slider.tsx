@@ -85,27 +85,27 @@ export const BrandSlider: React.FC<BrandSliderProps> = ({
   const client = [
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/hitlr_viral.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9oaXRscl92aXJhbC5tcDQiLCJpYXQiOjE3NTM5NTkxNTgsImV4cCI6MTc4NTQ5NTE1OH0.KLOdDjKJFUrQL6o9MAA0ubLIN_2ROXKvPU_rXs7lcxU",
+      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/engineering.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9lbmdpbmVlcmluZy5tcDQiLCJpYXQiOjE3NTQ0MjAyMTUsImV4cCI6MTc4NTk1NjIxNX0.nfX4womqYDQfpm8ABnNKrwZacagLXHLbU8NQmsHfPGk",
     },
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/hitlr_viral.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9oaXRscl92aXJhbC5tcDQiLCJpYXQiOjE3NTM5NTk1ODUsImV4cCI6MTc4NTQ5NTU4NX0.b9QFmXGnKEc49LnJ6wUizAbAPZGkYuvUrrsswYYsXKE",
+      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/gtavicecity.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9ndGF2aWNlY2l0eS5tcDQiLCJpYXQiOjE3NTQ0MjAyMzUsImV4cCI6MTc4NTk1NjIzNX0.YnhjSITg0c8PvBaFKCQf_jg2sGMZUxVdUPlJDyxYTYc",
     },
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/tekken.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy90ZWtrZW4ubXA0IiwiaWF0IjoxNzUzOTU5NjgyLCJleHAiOjE3ODU0OTU2ODJ9.IQenVJqNKOjbXAV_sQHMy3vruaw2kSnAECk5UbwD5N4",
+      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/hitlr_viral.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9oaXRscl92aXJhbC5tcDQiLCJpYXQiOjE3NTQ0MjAyNTQsImV4cCI6MTc4NTk1NjI1NH0.N6whU4JAFOsuuBLnPAJnjn6Vuk0Awy9Ubh0KLQzzKlE",
     },
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/engineering.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9lbmdpbmVlcmluZy5tcDQiLCJpYXQiOjE3NTQ0MTQwOTIsImV4cCI6MTc4NTk1MDA5Mn0.sj0Bfgu7wLOokTR9vQmEFjmxvRWHo2v-XLQLA1-t2k0",
+      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/robots.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9yb2JvdHMubXA0IiwiaWF0IjoxNzU0NDIwMjc0LCJleHAiOjE3ODU5NTYyNzR9.l_V_9VShYDDjHJDDHQqB588iZw-VRUyStpxj9fe1rt0",
     },
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/robots.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9yb2JvdHMubXA0IiwiaWF0IjoxNzU0NDE0MTQ3LCJleHAiOjE3ODU5NTAxNDd9.Qb6gQosdkjuALKKk2mFn8O2ynUbyMrSMA5Os7jaYux8",
+      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/russian_revolution.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9ydXNzaWFuX3Jldm9sdXRpb24ubXA0IiwiaWF0IjoxNzU0NDIwMjk2LCJleHAiOjE3ODU5NTYyOTZ9.A_esrM-oMkDn5B_9ncUWsWibH4cS-9x0vy741ATJlN4",
     },
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/thermodynamics.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy90aGVybW9keW5hbWljcy5tcDQiLCJpYXQiOjE3NTQ0MTQxNzAsImV4cCI6MTc4NTk1MDE3MH0.7Eg9t-zuL8XplyFNwyUx6QOauASObjwoq7Tnf9JSLok",
+      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/tekken.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy90ZWtrZW4ubXA0IiwiaWF0IjoxNzU0NDIwMzIwLCJleHAiOjE3ODU5NTYzMjB9.mi2ImE4V1lz6CTtKo1eR8E00hx7PVoSGMR3jUcDas70",
     },
     {
       title: "SaaS Development",
