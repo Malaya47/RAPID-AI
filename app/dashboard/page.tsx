@@ -229,7 +229,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2 overflow-hidden">
         <Card className="col-span-1 bg-neutral-950 text-white border-0 shadow-md shadow-indigo-500">
           <CardHeader>
             <CardTitle>Recent Videos</CardTitle>
@@ -247,28 +247,79 @@ export default function DashboardPage() {
                 </div>
               </div>
             ) : (
+              // <div className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-neutral-700">
+              //   {videos.slice(0, 3).map((video) => (
+              //     <div key={video.id} className="w-40 flex-shrink-0">
+              //       <div className="aspect-[3/4] bg-neutral-950 border rounded-md overflow-hidden mb-2 shadow">
+              //         <video
+              //           src={video.video_url}
+              //           poster={video.thumbnail_url || undefined}
+              //           className="h-full w-full object-cover"
+              //           controls={false}
+              //         />
+              //       </div>
+              //       <div
+              //         className="text-sm font-medium truncate"
+              //         title={video.title || "Untitled Video"}
+              //       >
+              //         {video.title || "Untitled Video"}
+              //       </div>
+              //       <div className="text-xs text-muted-foreground">
+              //         {format(new Date(video.created_at), "MMM d, yyyy")}
+              //       </div>
+              //     </div>
+              //   ))}
+              // </div>
               <div className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-neutral-700">
-                {videos.slice(0, 3).map((video) => (
-                  <div key={video.id} className="w-40 flex-shrink-0">
-                    <div className="aspect-[3/4] bg-neutral-950 border rounded-md overflow-hidden mb-2 shadow">
-                      <video
-                        src={video.video_url}
-                        poster={video.thumbnail_url || undefined}
-                        className="h-full w-full object-cover"
-                        controls={false}
-                      />
+                {/* Mobile (only first video) */}
+                <div className="flex md:hidden gap-4">
+                  {videos.slice(0, 1).map((video) => (
+                    <div key={video.id} className="w-40 flex-shrink-0">
+                      <div className="aspect-[3/4] bg-neutral-950 border rounded-md overflow-hidden mb-2 shadow">
+                        <video
+                          src={video.video_url}
+                          poster={video.thumbnail_url || undefined}
+                          className="h-full w-full object-cover"
+                          controls={false}
+                        />
+                      </div>
+                      <div
+                        className="text-sm font-medium truncate"
+                        title={video.title || "Untitled Video"}
+                      >
+                        {video.title || "Untitled Video"}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {format(new Date(video.created_at), "MMM d, yyyy")}
+                      </div>
                     </div>
-                    <div
-                      className="text-sm font-medium truncate"
-                      title={video.title || "Untitled Video"}
-                    >
-                      {video.title || "Untitled Video"}
+                  ))}
+                </div>
+
+                {/* Medium and up (first 3 videos) */}
+                <div className="hidden md:flex gap-4">
+                  {videos.slice(0, 3).map((video) => (
+                    <div key={video.id} className="w-40 flex-shrink-0">
+                      <div className="aspect-[3/4] bg-neutral-950 border rounded-md overflow-hidden mb-2 shadow">
+                        <video
+                          src={video.video_url}
+                          poster={video.thumbnail_url || undefined}
+                          className="h-full w-full object-cover"
+                          controls={false}
+                        />
+                      </div>
+                      <div
+                        className="text-sm font-medium truncate"
+                        title={video.title || "Untitled Video"}
+                      >
+                        {video.title || "Untitled Video"}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {format(new Date(video.created_at), "MMM d, yyyy")}
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {format(new Date(video.created_at), "MMM d, yyyy")}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
           </CardContent>
