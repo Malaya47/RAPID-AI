@@ -52,20 +52,20 @@ export default function CreateVideoPage(): JSX.Element {
           >
             Generate AI Script
           </TabsTrigger>
-          <TabsTrigger
+          {/* <TabsTrigger
             className="data-[state=active]:bg-neutral-100 rounded-3xl"
             value="narration-to-video"
           >
             Own Script
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
         <TabsContent value="text-to-video" className="mt-4">
           {/* <TextToVideoTab {...sharedProps} /> */}
           <TextToVideoTab />
         </TabsContent>
-        <TabsContent value="narration-to-video" className="mt-4">
-          {/* <NarrationToVideoTab {...sharedProps} /> */}
-        </TabsContent>
+        {/* <TabsContent value="narration-to-video" className="mt-4">
+          <NarrationToVideoTab {...sharedProps} />
+        </TabsContent> */}
       </Tabs>
     </div>
   );
