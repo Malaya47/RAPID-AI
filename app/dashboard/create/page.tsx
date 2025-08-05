@@ -65,7 +65,7 @@ export default function CreateVideoPage(): JSX.Element {
         </TabsContent>
         <TabsContent value="narration-to-video" className="mt-4">
           {/* <NarrationToVideoTab {...sharedProps} /> */}
-          <h1>Feature comming soon.....</h1>
+          <h1>Feature coming soon.....</h1>
         </TabsContent>
       </Tabs>
     </div>
