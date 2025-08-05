@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { useSidebar } from "@/components/ui/sidebar";
 import { useAuth } from "@/context/auth-context";
 import {
   VideoIcon,
@@ -30,6 +31,8 @@ export function DashboardSidebar({ className }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { signOut } = useAuth();
+
+  const { toggleSidebar } = useSidebar();
 
   const sidebarItems = [
     {
@@ -64,13 +67,10 @@ export function DashboardSidebar({ className }: SidebarProps) {
                 <div className="w-full max-w-5xl">
                   <div className="gap-2 mr-4">
                     <div className="w-full rounded-md text-white">
-                      <a
-                        href="/"
-                        className="flex items-center gap-2 p-2 font-medium text-lg"
-                      >
+                      <span className="flex items-center gap-2 p-2 font-medium text-lg">
                         <VideoIcon className="text-indigo-500" />
                         AiGenReels
-                      </a>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -84,6 +84,7 @@ export function DashboardSidebar({ className }: SidebarProps) {
             <SidebarMenu className="space-y-3 py-5">
               {sidebarItems.map((item, index) => (
                 <SidebarMenuButton
+                  onClick={toggleSidebar}
                   key={index}
                   asChild
                   className={cn(
