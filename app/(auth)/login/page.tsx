@@ -24,7 +24,7 @@ import { Typewriter } from "react-simple-typewriter";
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { signIn } = useAuth();
+  const { signIn, signInWithOAuth } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -157,6 +157,19 @@ export default function LoginPage() {
               ) : (
                 "Sign in"
               )}
+            </Button>
+
+            <Button
+              type="button"
+              className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition-colors duration-200"
+              onClick={() => signInWithOAuth("google")}
+            >
+              <img
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                alt="Google"
+                className="w-5 h-5 mr-2"
+              />
+              Sign in with Google
             </Button>
           </form>
         </CardContent>

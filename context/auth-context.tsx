@@ -15,6 +15,7 @@ type AuthContextType = {
   signOut: () => Promise<void>;
   forgotPassword: (email: string) => Promise<{ error: any }>;
   resetPassword: (newPassword: string) => Promise<{ error: any }>;
+  signInWithOAuth: (provider: "google") => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -52,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const getSession = async () => {
-      const { data, error } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
       setSession(data.session);
       setUser(data.session?.user ?? null);
       setIsLoading(false);
@@ -62,10 +63,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
+
+      // After login, insert user into "profiles" table if not already there
+      if (session?.user) {
+        const userId = session.user.id;
+
+        const { data: existingProfile, error: checkError } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("id", userId)
+          .single();
+
+        if (!existingProfile && !checkError) {
+          const { error: insertError } = await supabase
+            .from("profiles")
+            .insert({
+              id: userId,
+              total_credits: 0,
+            });
+
+          if (insertError) {
+            console.error("Failed to insert profile:", insertError);
+          }
+        }
+      }
     });
 
     return () => {
@@ -79,6 +104,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
     });
     return { error };
+  };
+
+  const signInWithOAuth = async (provider: "google") => {
+    await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`, // or your desired redirect
+      },
+    });
   };
 
   const signUp = async (email: string, password: string) => {
@@ -127,6 +161,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     forgotPassword,
     resetPassword,
+    signInWithOAuth,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
