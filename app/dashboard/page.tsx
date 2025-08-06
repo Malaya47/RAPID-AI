@@ -31,6 +31,7 @@ export default function DashboardPage() {
     null
   );
   const [loading, setLoading] = useState(true);
+  const [totalVideosCount, setTotalVideosCount] = useState(0);
   const supabase = createClient();
   const subscriptionService = new SubscriptionService();
 
@@ -72,6 +73,18 @@ export default function DashboardPage() {
         } = await supabase.auth.getUser();
 
         if (!user) return;
+
+        // Get total video count
+        const { count, error: countError } = await supabase
+          .from("videos")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id);
+
+        if (countError) {
+          console.error("Error fetching video count:", countError);
+        } else {
+          setTotalVideosCount(count || 0);
+        }
 
         const userSubscription = await subscriptionService.getUserSubscription(
           user.id
@@ -212,7 +225,7 @@ export default function DashboardPage() {
         <VideoStatCard
           title="Total Videos"
           icon={<Film className="h-4 w-4 text-muted-foreground" />}
-          value={videos.length}
+          value={totalVideosCount}
           description="Videos created with our platform"
         />
         <VideoStatCard
