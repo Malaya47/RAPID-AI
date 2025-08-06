@@ -85,31 +85,31 @@ export const BrandSlider: React.FC<BrandSliderProps> = ({
   const client = [
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/engineering.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9lbmdpbmVlcmluZy5tcDQiLCJpYXQiOjE3NTQ0MjAyMTUsImV4cCI6MTc4NTk1NjIxNX0.nfX4womqYDQfpm8ABnNKrwZacagLXHLbU8NQmsHfPGk",
+      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470725/gtavicecity_b8ofgb.mp4",
     },
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/gtavicecity.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9ndGF2aWNlY2l0eS5tcDQiLCJpYXQiOjE3NTQ0MjAyMzUsImV4cCI6MTc4NTk1NjIzNX0.YnhjSITg0c8PvBaFKCQf_jg2sGMZUxVdUPlJDyxYTYc",
+      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470697/hitlr_viral_ngrbim.mp4",
     },
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/hitlr_viral.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9oaXRscl92aXJhbC5tcDQiLCJpYXQiOjE3NTQ0MjAyNTQsImV4cCI6MTc4NTk1NjI1NH0.N6whU4JAFOsuuBLnPAJnjn6Vuk0Awy9Ubh0KLQzzKlE",
+      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470691/russian_revolution_jqcjtz.mp4",
     },
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/robots.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9yb2JvdHMubXA0IiwiaWF0IjoxNzU0NDIwMjc0LCJleHAiOjE3ODU5NTYyNzR9.l_V_9VShYDDjHJDDHQqB588iZw-VRUyStpxj9fe1rt0",
+      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470655/engineering_xusghx.mp4",
     },
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/russian_revolution.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy9ydXNzaWFuX3Jldm9sdXRpb24ubXA0IiwiaWF0IjoxNzU0NDIwMjk2LCJleHAiOjE3ODU5NTYyOTZ9.A_esrM-oMkDn5B_9ncUWsWibH4cS-9x0vy741ATJlN4",
+      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470631/thermodynamics_g7fxxu.mp4",
     },
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/tekken.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy90ZWtrZW4ubXA0IiwiaWF0IjoxNzU0NDIwMzIwLCJleHAiOjE3ODU5NTYzMjB9.mi2ImE4V1lz6CTtKo1eR8E00hx7PVoSGMR3jUcDas70",
+      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470610/tekken_wa25j5.mp4",
     },
     {
       title: "SaaS Development",
-      url: "https://dwdgisyhjwntfosrlsde.supabase.co/storage/v1/object/sign/example-videos/thermodynamics.mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84Zjk5NjlmZS04YWFmLTQzZDktYTEwNi03MGVjMTgzZmIyYTIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJleGFtcGxlLXZpZGVvcy90aGVybW9keW5hbWljcy5tcDQiLCJpYXQiOjE3NTQ0MTQ0MTEsImV4cCI6MTc4NTk1MDQxMX0.3n162z1oqiL79729T8GnvHsojsAPKHpO7S-tW3h3nrM",
+      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470598/dragonball_j4x85u.mp4",
     },
   ];
 
