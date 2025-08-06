@@ -44,48 +44,17 @@ import { io, Socket } from "socket.io-client";
 import { getSocket } from "@/lib/socket";
 import { generateSlugAndEmail } from "@/utils/supabase/share-video";
 import { useVideo } from "@/context/video-context";
+import { X, ChevronDown } from "lucide-react";
 
 export default function TextToVideoTab({}: // duration,
-// setDuration,
-// voice,
-// setVoice,
-// generated,
-// setGenerated,
-// error,
-// setError,
-// loading,
-// setLoading,
+
 {}): JSX.Element {
   const { user } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
-  // const [prompt, setPrompt] = useState<string>("");
-  // const [narration, setNarration] = useState<string>("");
-  // const [script, setScript] = useState<any | null>(null);
-  // const [showNarrationEditor, setShowNarrationEditor] =
-  //   useState<boolean>(false);
-  // const [showNarrationWarning, setShowNarrationWarning] =
-  //   useState<boolean>(false);
-  // const [showPreviewDrawer, setShowPreviewDrawer] = useState<boolean>(false);
-  // const [showPreviewWarning, setShowPreviewWarning] = useState<boolean>(false);
-  // const [playableVideoUrl, setPlayableVideoUrl] = useState<string>("");
-  // const [videoUrl, setVideoUrl] = useState<string>("");
-  // const [isRawVideo, setIsRawVideo] = useState<boolean>(false);
-  // const [isCaptioning, setIsCaptioning] = useState<boolean>(false);
-  // const [isVideoLoading, setIsVideoLoading] = useState<boolean>(false);
-  // const [videoGenerationStage, setVideoGenerationStage] = useState<string>("");
-  // const [fontName, setFontName] = useState<FontName>("Anton");
-  // const [fontBaseColor, setFontBaseColor] = useState<ColorName>("white");
-  // const [fontHighlightColor, setFontHighlightColor] =
-  //   useState<ColorName>("indigo");
-  // const { toast } = useToast();
+
   const subscriptionService = new SubscriptionService();
   const [credits, setCredits] = useState<number | null>(null);
-  // const [videoStored, setVideoStored] = useState<boolean>(false);
-  // const [isGeneratingNarration, setIsGeneratingNarration] =
-  //   useState<boolean>(false);
-  // const [isGeneratingViralNarration, setIsGeneratingViralNarration] =
-  //   useState<boolean>(false);
 
   // Use video context instead of local state
   const {
@@ -155,122 +124,6 @@ export default function TextToVideoTab({}: // duration,
 
   // Socket.IO references
   const socket = useRef<ReturnType<typeof getSocket>>(getSocket());
-  // const currentJobId = useRef<string>("");
-  //const storedJobId = useRef<string>(""); // Track which job has been stored
-
-  // const [currentProgress, setCurrentProgress] = useState(0);
-
-  //const totalDurationInSeconds = 360; // 6 minutes
-  //const maxSimulatedProgress = 98;
-  //const progressIncrement = maxSimulatedProgress / totalDurationInSeconds;
-
-  // Initialize Socket.IO connection on mount
-  // useEffect(() => {
-  //   // // Initialize socket connection
-  //   // socket.current = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, {
-  //   //   transports: ["websocket"],
-  //   //   autoConnect: true,
-  //   // });
-
-  //   socket.current.off("job_status_update"); // clean before setting
-
-  //   // Listen for job status updates
-  //   socket.current.on(
-  //     "job_status_update",
-  //     (data: {
-  //       status: string;
-  //       raw_video_url?: string;
-  //       captioned_video_url?: string;
-  //       job_id: string;
-  //     }) => {
-  //       console.log("Socket job status update:", data);
-
-  //       // Only process updates for the current job
-  //       if (data.job_id !== currentJobId.current) {
-  //         return;
-  //       }
-
-  //       // Update generation stage
-  //       setVideoGenerationStage(`Status: ${data.status}`);
-
-  //       // Handle raw video URL
-  //       if (data.raw_video_url) {
-  //         console.log("Raw video URL received via socket:", data.raw_video_url);
-  //         setVideoUrl(data.raw_video_url);
-  //         setPlayableVideoUrl(data.raw_video_url);
-  //         setIsRawVideo(true);
-  //         setLoading(false);
-
-  //         setGenerated(true);
-
-  //         setVideoGenerationStage("Raw video ready");
-
-  //         // Start captioning process
-  //         setIsCaptioning(true);
-  //         setVideoGenerationStage("Adding captions...");
-  //       }
-
-  //       // Handle captioned video URL (final result)
-  //       if (data.captioned_video_url) {
-  //         console.log(
-  //           "Captioned video URL received via socket:",
-  //           data.captioned_video_url
-  //         );
-  //         setVideoUrl(data.captioned_video_url);
-  //         setPlayableVideoUrl(data.captioned_video_url);
-  //         setIsRawVideo(false);
-  //         setIsCaptioning(false);
-  //         setIsVideoLoading(false);
-  //         setVideoGenerationStage("Captioned video ready");
-  //         setCurrentProgress(100);
-
-  //         // Mark as generated only when captioned video is ready
-  //         setGenerated(true);
-  //       }
-
-  //       // Handle completion or error states
-  //       if (
-  //         data.status === "completed" ||
-  //         data.status === "failed" ||
-  //         data.status === "error"
-  //       ) {
-  //         setLoading(false);
-  //         setIsVideoLoading(false);
-  //         setIsCaptioning(false);
-
-  //         if (data.status === "failed" || data.status === "error") {
-  //           setError("Video generation failed. Please try again.");
-  //           toast({
-  //             title: "Video generation failed",
-  //             description:
-  //               "Try again, there might be an issue in generating video. Your credit will not be deducted.",
-  //             variant: "destructive",
-  //           });
-  //         }
-  //       }
-  //     }
-  //   );
-
-  //   // // Handle socket connection events
-  //   // socket.current.on("connect", () => {
-  //   //   console.log("Socket connected:", socket.current?.id);
-  //   // });
-
-  //   // socket.current.on("disconnect", () => {
-  //   //   console.log("Socket disconnected");
-  //   // });
-
-  //   // socket.current.on("connect_error", (error) => {
-  //   //   console.error("Socket connection error:", error);
-  //   // });
-
-  //   // Cleanup on unmount
-  //   // return () => {
-  //   //   if (socket.current) {
-  //   //     socket.current.disconnect();
-  //   //   }
-  //   // };
-  // }, []);
 
   // Fetch credits on mount
   useEffect(() => {
@@ -285,29 +138,6 @@ export default function TextToVideoTab({}: // duration,
     };
     fetchCredits();
   }, [user]);
-
-  // useEffect(() => {
-  //   if (!loading) return;
-
-  //   let progress = 0;
-
-  //   const interval = setInterval(() => {
-  //     progress += progressIncrement;
-  //     if (progress >= maxSimulatedProgress) {
-  //       progress = maxSimulatedProgress;
-  //       clearInterval(interval);
-  //     }
-  //     setCurrentProgress(Math.floor(progress));
-  //   }, 1000); // Update every 1 second
-
-  //   return () => clearInterval(interval);
-  // }, [loading]);
-
-  // useEffect(() => {
-  //   if (generated && !loading) {
-  //     setCurrentProgress(100);
-  //   }
-  // }, [generated, loading]);
 
   const handleGenerateNarration = async (): Promise<void> => {
     if (!prompt) return;
@@ -460,110 +290,6 @@ export default function TextToVideoTab({}: // duration,
     }
   };
 
-  // Handle storing video when final URL is available
-  // useEffect(() => {
-  //   const storeVideo = async () => {
-  //     console.log("storeVideo useEffect triggered with:", {
-  //       videoUrl: videoUrl,
-  //       isRawVideo,
-  //       hasUser: !!user,
-  //       generated,
-  //       videoGenerationStage,
-  //       videoStored,
-  //       currentJobId: currentJobId.current,
-  //       storedJobId: storedJobId.current,
-  //     });
-
-  //     // Only store CAPTIONED videos (final processed videos with captions)
-  //     // Skip if:
-  //     // 1. No video URL
-  //     // 2. It's a raw video (not captioned yet)
-  //     // 3. No user
-  //     // 4. Not marked as generated (final)
-  //     // 5. Not in "Captioned video ready" stage
-  //     // 6. Already stored
-  //     // 7. No current job ID
-  //     // 8. Already stored this specific job
-  //     if (
-  //       !videoUrl ||
-  //       isRawVideo || // IMPORTANT: Skip raw videos, only store captioned videos
-  //       !user ||
-  //       !generated || // Only store when finally generated (set to true only for captioned videos)
-  //       videoGenerationStage !== "Captioned video ready" || // Only store when captions are done
-  //       videoStored ||
-  //       !currentJobId.current ||
-  //       storedJobId.current === currentJobId.current
-  //     ) {
-  //       console.log(
-  //         "Skipping video storage - waiting for captioned video or already stored"
-  //       );
-  //       return;
-  //     }
-
-  //     console.log("Storing CAPTIONED video for job:", currentJobId.current);
-
-  //     try {
-  //       setVideoGenerationStage("Saving captioned video to database...");
-  //       setVideoStored(true);
-  //       storedJobId.current = currentJobId.current;
-
-  //       await storeVideoInSupabase(
-  //         videoUrl, // This will be the captioned video URL
-  //         user.id,
-  //         duration,
-  //         prompt,
-  //         narration
-  //       );
-  //       console.log(
-  //         "Captioned video stored in Supabase successfully for job:",
-  //         currentJobId.current
-  //       );
-  //       // ✅ NEW: Generate slug + send email
-  //       const slug = await generateSlugAndEmail({
-  //         videoUrl,
-  //         userEmail: user.email ?? "",
-  //       });
-
-  //       if (slug) {
-  //         console.log("Slug generated and email sent:", slug);
-  //       } else {
-  //         console.warn("Slug or email failed");
-  //       }
-  //       setVideoGenerationStage("Captioned video saved successfully");
-  //       currentJobId.current = "";
-  //     } catch (storeErr) {
-  //       console.error("Error storing captioned video in Supabase:", storeErr);
-  //       setVideoStored(false);
-  //       storedJobId.current = "";
-
-  //       if (
-  //         storeErr instanceof Error &&
-  //         storeErr.message === "Insufficient credits"
-  //       ) {
-  //         setError(
-  //           "You don't have enough credits to generate this video. Please purchase more credits."
-  //         );
-  //         router.push("/pricing");
-  //       } else {
-  //         setError(
-  //           `Captioned video generated but failed to save: ${
-  //             storeErr instanceof Error ? storeErr.message : "Unknown error"
-  //           }`
-  //         );
-  //       }
-  //     }
-  //   };
-
-  //   storeVideo();
-  // }, [
-  //   videoUrl,
-  //   isRawVideo,
-  //   user?.id,
-  //   generated,
-  //   videoGenerationStage,
-  //   videoStored,
-  // ]);
-
   const handleNarrationDialogClose = (open: boolean) => {
     if (!open && showNarrationEditor) {
       setShowNarrationWarning(true);
@@ -587,9 +313,9 @@ export default function TextToVideoTab({}: // duration,
   };
 
   return (
-    <div className="md:grid gap-6 md:grid-cols-2 relative md:space-y-0 space-y-5">
+    <div className="grid gap-4 sm:gap-6 grid-cols-1 xl:grid-cols-2 relative px-2 sm:px-4 md:px-6">
       <div>
-        <div className="">
+        <div className="flex flex-col gap-3 sm:gap-5">
           <VideoForm
             textareaLabel="Prompt"
             textareaPlaceholder="A cinematic shot of a futuristic city with flying cars and neon lights..."
@@ -612,8 +338,6 @@ export default function TextToVideoTab({}: // duration,
             fontHighlightColor={fontHighlightColor}
             setFontHighlightColor={setFontHighlightColor}
           />
-        </div>
-        <div className="">
           <VideoFields
             textareaLabel="Prompt"
             textareaPlaceholder="A cinematic shot of a futuristic city with flying cars and neon lights..."
@@ -639,34 +363,36 @@ export default function TextToVideoTab({}: // duration,
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-col gap-6">
+      <div className="flex flex-col gap-4 sm:gap-6">
         {narration && !showNarrationEditor && !generated ? (
-          <div className="rounded-full w-fit mx-auto col-span-2">
+          <div className="rounded-full w-fit mx-auto col-span-1 xl:col-span-2">
             <Button
               disabled={loading || !narration}
-              className="rounded-full p-4 bg-green-600 shadow-sm shadow-neutral-500 animate-pulse"
+              className="rounded-full p-3 sm:p-4 bg-green-600 shadow-sm shadow-neutral-500 animate-pulse text-sm sm:text-base"
               onClick={() => setShowNarrationEditor(true)}
             >
-              <Video className="h-5 w-5" />
+              <Video className="h-4 w-4 sm:h-5 sm:w-5" />
               <span className="ml-2">Reopen Narration</span>
             </Button>
           </div>
         ) : (
-          <div className="flex flex-wrap justify-center gap-4 w-full">
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 w-full">
             <Button
               onClick={handleGenerateNarration}
               disabled={!prompt || loading}
-              className="w-fit gap-2 me-4 bg-indigo-600 hover:bg-indigo-700 rounded-3xl"
+              className="w-full sm:w-fit gap-2 bg-indigo-600 hover:bg-indigo-700 rounded-3xl text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3"
             >
               {isGeneratingNarration ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Generating...
+                  <span className="hidden xs:inline">Generating...</span>
+                  <span className="xs:hidden">Gen...</span>
                 </>
               ) : (
                 <>
                   <Wand2 className="h-4 w-4" />
-                  Generate Narration
+                  <span className="hidden xs:inline">Generate Narration</span>
+                  <span className="xs:hidden">Gen Narration</span>
                 </>
               )}
             </Button>
@@ -674,17 +400,19 @@ export default function TextToVideoTab({}: // duration,
             <Button
               onClick={handleGenerateViralNarration}
               disabled={!prompt || loading}
-              className="w-fit gap-2 bg-indigo-600 hover:bg-indigo-700 rounded-3xl"
+              className="w-full sm:w-fit gap-2 bg-indigo-600 hover:bg-indigo-700 rounded-3xl text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3"
             >
               {isGeneratingViralNarration ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Generating...
+                  <span className="hidden xs:inline">Generating...</span>
+                  <span className="xs:hidden">Gen...</span>
                 </>
               ) : (
                 <>
                   <Wand2 className="h-4 w-4" />
-                  Viral Narration
+                  <span className="hidden xs:inline">Viral Narration</span>
+                  <span className="xs:hidden">Viral</span>
                 </>
               )}
             </Button>
@@ -696,24 +424,27 @@ export default function TextToVideoTab({}: // duration,
         </div>
       </div>
 
+      {/* Narration Editor Dialog - Enhanced Responsive */}
       <Dialog
         open={showNarrationEditor}
         onOpenChange={handleNarrationDialogClose}
       >
-        <DialogContent className="sm:max-w-[600px] bg-neutral-950 text-white border-none rounded-3xl shadow-sm shadow-neutral-500">
-          <DialogHeader>
-            <DialogTitle>Edit Narration</DialogTitle>
+        <DialogContent className="w-[95vw] max-w-[95vw] sm:w-[90vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] bg-neutral-950 text-white border-none rounded-2xl sm:rounded-3xl shadow-sm shadow-neutral-500 max-h-[90vh] overflow-y-auto mx-2 sm:mx-auto">
+          <DialogHeader className="px-2 sm:px-4 pt-4 sm:pt-6">
+            <DialogTitle className="text-lg sm:text-xl font-semibold">
+              Edit Narration
+            </DialogTitle>
           </DialogHeader>
-          <div className="py-4 space-y-2">
+          <div className="px-2 sm:px-4 py-2 sm:py-4 space-y-3 sm:space-y-4">
             <Textarea
-              className="w-full h-80 bg-neutral-900 border-none rounded-3xl"
+              className="w-full h-48 xs:h-60 sm:h-72 md:h-80 bg-neutral-900 border-none rounded-2xl sm:rounded-3xl text-sm sm:text-base p-3 sm:p-4 resize-none"
               value={narration}
               onChange={(e) => setNarration(e.target.value)}
               placeholder="Edit the generated narration here..."
             />
-            <div className="flex gap-2 text-sm text-yellow-500">
-              <AlertCircle className="w-5 h-5" />
-              <p>
+            <div className="flex flex-col xs:flex-row gap-2 text-xs sm:text-sm text-yellow-500 bg-yellow-500/10 p-3 rounded-xl">
+              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 xs:mt-0" />
+              <p className="leading-relaxed">
                 Don't switch{" "}
                 <span className="font-bold text-yellow-200">
                   from Text To Video To Narration to Video
@@ -722,18 +453,18 @@ export default function TextToVideoTab({}: // duration,
               </p>
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="flex-col xs:flex-row gap-2 xs:gap-3 px-2 sm:px-4 pb-4 sm:pb-6">
             <Button
               variant="outline"
               onClick={() => setShowNarrationWarning(true)}
-              className="w-fit gap-2 bg-transparent rounded-3xl"
+              className="w-full xs:w-auto gap-2 bg-transparent rounded-2xl sm:rounded-3xl text-sm sm:text-base py-2 sm:py-3"
             >
               Cancel
             </Button>
             <Button
               onClick={handleGenerateVideo}
               disabled={loading || !narration}
-              className="w-fit gap-2 bg-indigo-600 hover:bg-indigo-700 rounded-3xl"
+              className="w-full xs:w-auto gap-2 bg-indigo-600 hover:bg-indigo-700 rounded-2xl sm:rounded-3xl text-sm sm:text-base py-2 sm:py-3"
             >
               Generate Video
             </Button>
@@ -741,33 +472,34 @@ export default function TextToVideoTab({}: // duration,
         </DialogContent>
       </Dialog>
 
+      {/* Narration Warning Dialog - Enhanced Responsive */}
       <Dialog
         open={showNarrationWarning}
         onOpenChange={setShowNarrationWarning}
       >
-        <DialogContent className="bg-neutral-950 text-white border-none shadow-sm shadow-neutral-500">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-yellow-500" />
+        <DialogContent className="w-[95vw] max-w-[95vw] xs:w-[90vw] xs:max-w-[400px] sm:max-w-[500px] bg-neutral-950 text-white border-none rounded-2xl sm:rounded-3xl shadow-sm shadow-neutral-500 mx-2 sm:mx-auto">
+          <DialogHeader className="px-2 sm:px-4 pt-4 sm:pt-6">
+            <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-500 flex-shrink-0" />
               Warning
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-neutral-300 text-sm sm:text-base mt-2 leading-relaxed">
               Closing or canceling the narration editor may result in losing
               your credits and video progress. Are you sure you want to proceed?
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="flex-col xs:flex-row gap-2 xs:gap-3 px-2 sm:px-4 pb-4 sm:pb-6 pt-2">
             <Button
               variant="outline"
               onClick={() => setShowNarrationWarning(false)}
-              className="w-fit gap-2 bg-transparent rounded-3xl"
+              className="w-full xs:w-auto gap-2 bg-transparent rounded-2xl sm:rounded-3xl text-sm sm:text-base"
             >
               Continue Editing
             </Button>
             <Button
               variant="destructive"
               onClick={confirmNarrationClose}
-              className="w-fit gap-2 rounded-3xl"
+              className="w-full xs:w-auto gap-2 rounded-2xl sm:rounded-3xl text-sm sm:text-base"
             >
               Close Anyway
             </Button>
@@ -775,102 +507,136 @@ export default function TextToVideoTab({}: // duration,
         </DialogContent>
       </Dialog>
 
-      {/* Preview Video Drawer - Now shows during loading state as well */}
+      {/* Preview Video Drawer - Enhanced Responsive with Fixed Close Button */}
       <Drawer open={showPreviewDrawer} onOpenChange={handlePreviewDrawerClose}>
-        <DrawerContent className="text-white bg-transparent backdrop-blur-sm border-none shadow-md shadow-neutral-500">
-          <div className="mx-auto w-full md:max-w-2xl">
-            <DrawerHeader>
-              <DrawerTitle className="text-center">
+        <DrawerContent className="text-white bg-black/90 sm:bg-transparent backdrop-blur-sm border-none shadow-md shadow-neutral-500 max-h-[95vh] sm:max-h-[100vh] overflow-hidden flex flex-col">
+          {/* Fixed Header with Close Button */}
+          <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-sm border-b border-white/10 px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
+            <DrawerHeader className="text-center p-0 flex-1 flex items-center justify-center">
+              <DrawerTitle className="text-base sm:text-lg md:text-xl">
                 {videoUrl ? (
                   isRawVideo ? (
-                    <div className="md:flex text-center items-center justify-center gap-2">
-                      <span>Preview (Raw Video)</span>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                      <span className="text-center">Preview (Raw Video)</span>
                       {isCaptioning && (
-                        <div className="flex items-center gap-1 text-yellow-300 text-sm font-normal animate-pulse">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-
+                        <div className="flex items-center justify-center gap-1 text-yellow-300 text-xs sm:text-sm font-normal animate-pulse">
+                          <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                           <span>Adding captions...</span>
                         </div>
                       )}
                     </div>
                   ) : (
-                    "Preview (Captioned Video)"
+                    <span className="text-center">
+                      Preview (Captioned Video)
+                    </span>
                   )
                 ) : (
-                  <div className="flex items-center justify-center gap-2">
-                    <Loader2 className="h-5 w-5 animate-spin" />
-
-                    <span>{videoGenerationStage || "Generating Video..."}</span>
+                  <div className="flex flex-col xs:flex-row items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+                    <span className="text-sm sm:text-base text-center">
+                      {videoGenerationStage || "Generating Video..."}
+                    </span>
                   </div>
                 )}
               </DrawerTitle>
             </DrawerHeader>
-            <div className="p-4 flex flex-col items-center justify-end">
-              {videoUrl ? (
-                <VideoPreview
-                  // download={playableVideoUrl}
-                  download={slugUrl}
-                  generated={generated}
-                  videoUrl={videoUrl}
-                  loading={loading}
-                  onRegenerate={handleGenerateNarration}
-                  isRawVideo={isRawVideo}
-                  isCaptioning={isCaptioning}
-                />
-              ) : (
-                <div className="w-full h-64 md:h-96 flex flex-col items-center justify-center bg-neutral-900 rounded-lg">
-                  <Loader2 className="h-12 w-12 animate-spin text-indigo-500 mb-4" />
-                  <p className="text-lg">
-                    <span className="text-lg font-medium text-white">
-                      {currentProgress}%
-                    </span>
-                  </p>
-                  <p className="text-sm text-gray-400 mt-2">
-                    This may take a few minutes
-                  </p>
-                </div>
-              )}
+
+            {/* Always visible close button */}
+            {/* <Button
+              onClick={() => setShowPreviewWarning(true)}
+              className="ml-4 p-2 sm:p-3 bg-red-600 hover:bg-red-700 text-white rounded-full min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px] flex items-center justify-center shadow-lg z-50 touch-manipulation border-none"
+              variant="default"
+              size="sm"
+            >
+              <X className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="sr-only">Close</span>
+            </Button> */}
+          </div>
+
+          {/* Scrollable Content Area */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="mx-auto w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl px-3 sm:px-4 md:px-6 py-4 sm:py-6 flex flex-col gap-3 sm:gap-4">
+              <div className="flex justify-center items-center w-full">
+                {videoUrl ? (
+                  <div className="w-full max-w-full">
+                    <VideoPreview
+                      download={slugUrl}
+                      generated={generated}
+                      videoUrl={videoUrl}
+                      loading={loading}
+                      onRegenerate={handleGenerateNarration}
+                      isRawVideo={isRawVideo}
+                      isCaptioning={isCaptioning}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full aspect-video flex flex-col items-center justify-center bg-neutral-900 rounded-lg">
+                    <Loader2 className="h-8 w-8 sm:h-12 sm:w-12 animate-spin text-indigo-500 mb-3 sm:mb-4" />
+                    <p className="text-base sm:text-lg">
+                      <span className="text-base sm:text-lg font-medium text-white">
+                        {currentProgress}%
+                      </span>
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-400 mt-1 sm:mt-2 text-center px-4">
+                      This may take a few minutes
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-            <DrawerFooter>
-              <DrawerClose asChild>
+          </div>
+
+          {/* Bottom Action Area */}
+          <div className="sticky bottom-0 bg-black/80 backdrop-blur-sm border-t border-white/10 px-3 sm:px-4 py-4 sm:py-6">
+            <div className="flex flex-col gap-3 w-full max-w-sm mx-auto">
+              <Button
+                onClick={() => setShowPreviewWarning(true)}
+                className="w-full gap-2 bg-red-600 hover:bg-red-700 text-white rounded-2xl sm:rounded-3xl text-sm sm:text-base py-3 sm:py-4 px-6 sm:px-8 font-medium shadow-lg border-none min-h-[48px] touch-manipulation"
+                variant="default"
+              >
+                Close Preview
+              </Button>
+
+              {/* <DrawerClose asChild>
                 <Button
-                  onClick={() => setShowPreviewWarning(true)}
-                  className="gap-2 bg-transparent rounded-3xl"
+                  className="w-full gap-2 bg-transparent border-2 border-white/20 hover:border-white/40 text-white rounded-2xl sm:rounded-3xl text-xs sm:text-sm py-2 sm:py-3 px-4 sm:px-6 min-h-[44px] touch-manipulation"
                   variant="outline"
                 >
-                  Close
+                  <ChevronDown className="h-4 w-4" />
+                  Swipe Down to Close
                 </Button>
-              </DrawerClose>
-            </DrawerFooter>
+              </DrawerClose> */}
+            </div>
           </div>
         </DrawerContent>
       </Drawer>
 
+      {/* Preview Warning Dialog - Enhanced Responsive */}
       <Dialog open={showPreviewWarning} onOpenChange={setShowPreviewWarning}>
-        <DialogContent className="bg-black/20 backdrop-blur-sm text-white border-none shadow-md shadow-indigo-500">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 font-medium">
-              <AlertCircle className="h-5 w-5 text-yellow-500" />
+        <DialogContent className="w-[95vw] max-w-[95vw] xs:w-[90vw] xs:max-w-[400px] sm:max-w-[500px] bg-black/90 sm:bg-black/20 backdrop-blur-sm text-white border-none shadow-md shadow-indigo-500 rounded-2xl sm:rounded-3xl mx-2 sm:mx-auto">
+          <DialogHeader className="px-2 sm:px-4 pt-4 sm:pt-6">
+            <DialogTitle className="flex items-center gap-2 font-medium text-lg sm:text-xl">
+              <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-500 flex-shrink-0" />
               Warning
             </DialogTitle>
-            <DialogDescription className="text-neutral-300">
+            <DialogDescription className="text-neutral-300 text-sm sm:text-base mt-2 leading-relaxed">
               If you close the video processing now, you may lose your credits
               and any progress made. Are you sure you want to proceed?
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <div className="flex gap-2 mx-auto w-fit">
+          <DialogFooter className="px-2 sm:px-4 pb-4 sm:pb-6 pt-2">
+            <div className="flex flex-col xs:flex-row gap-2 xs:gap-3 w-full xs:w-auto xs:mx-auto">
               <Button
                 variant="outline"
                 onClick={() => setShowPreviewWarning(false)}
-                className="w-fit gap-2 bg-transparent rounded-3xl"
+                className="w-full xs:w-auto gap-2 bg-transparent rounded-2xl sm:rounded-3xl text-sm sm:text-base"
               >
                 Continue Viewing
               </Button>
               <Button
                 variant="destructive"
                 onClick={confirmPreviewClose}
-                className="w-fit gap-2 rounded-3xl"
+                className="w-full xs:w-auto gap-2 rounded-2xl sm:rounded-3xl text-sm sm:text-base"
               >
                 Close Anyway
               </Button>
@@ -879,13 +645,16 @@ export default function TextToVideoTab({}: // duration,
         </DialogContent>
       </Dialog>
 
+      {/* Floating Reopen Button - Enhanced Responsive with better positioning */}
       {generated && !showPreviewDrawer && (
         <Button
-          className="fixed bottom-16 right-4 rounded-full p-4 shadow-lg"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 lg:bottom-16 lg:right-4 rounded-full p-3 sm:p-4 shadow-xl z-[100] text-sm sm:text-base 
+           hover:bg-indigo-700 text-white border-none min-w-[52px] min-h-[52px] sm:min-w-[60px] sm:min-h-[60px] touch-manipulation"
           onClick={() => setShowPreviewDrawer(true)}
         >
-          <Video className="h-5 w-5" />
-          <span className="ml-2">Reopen Preview</span>
+          <Video className="h-4 w-4 sm:h-5 sm:w-5" />
+          <span className="ml-2 hidden sm:inline">Reopen Preview</span>
+          <span className="ml-1 sm:hidden text-xs">Preview</span>
         </Button>
       )}
     </div>
