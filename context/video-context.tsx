@@ -148,8 +148,8 @@ export function VideoProvider({ children }: VideoProviderProps) {
   const storedJobId = useRef<string>("");
 
   // Progress simulation
-  const totalDurationInSeconds = 360; // 6 minutes
-  const maxSimulatedProgress = 98;
+  const totalDurationInSeconds = 120; // 2 minutes
+  const maxSimulatedProgress = 100;
   const progressIncrement = maxSimulatedProgress / totalDurationInSeconds;
 
   // Socket setup and cleanup
