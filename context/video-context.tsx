@@ -362,6 +362,14 @@ export function VideoProvider({ children }: VideoProviderProps) {
           state.currentJobId
         );
 
+        // Clear narration and script after successful storage
+        setState((prev) => ({
+          ...prev,
+          narration: "",
+          script: null,
+          prompt: "",
+        }));
+
         // Generate slug + send email
         const slug = await generateSlugAndEmail({
           videoUrl: state.videoUrl,
