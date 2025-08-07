@@ -499,7 +499,7 @@ export default function TextToVideoTab({}: // duration,
             <Button
               variant="destructive"
               onClick={confirmNarrationClose}
-              className="w-full xs:w-auto gap-2 rounded-2xl sm:rounded-3xl text-sm sm:text-base"
+              className="bg-indigo-600 hover:bg-indigo-700 w-full xs:w-auto gap-2 rounded-2xl sm:rounded-3xl text-sm sm:text-base"
             >
               Close Anyway
             </Button>
@@ -591,7 +591,7 @@ export default function TextToVideoTab({}: // duration,
             <div className="flex flex-col gap-3 w-full max-w-sm mx-auto">
               <Button
                 onClick={() => setShowPreviewWarning(true)}
-                className="w-full gap-2 bg-red-600 hover:bg-red-700 text-white rounded-2xl sm:rounded-3xl text-sm sm:text-base py-3 sm:py-4 px-6 sm:px-8 font-medium shadow-lg border-none min-h-[48px] touch-manipulation"
+                className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl sm:rounded-3xl text-sm sm:text-base py-3 sm:py-4 px-6 sm:px-8 font-medium shadow-lg border-none min-h-[48px] touch-manipulation"
                 variant="default"
               >
                 Close Preview
@@ -636,7 +636,7 @@ export default function TextToVideoTab({}: // duration,
               <Button
                 variant="destructive"
                 onClick={confirmPreviewClose}
-                className="w-full xs:w-auto gap-2 rounded-2xl sm:rounded-3xl text-sm sm:text-base"
+                className="bg-indigo-600 hover:bg-indigo-700 w-full xs:w-auto gap-2 rounded-2xl sm:rounded-3xl text-sm sm:text-base"
               >
                 Close Anyway
               </Button>

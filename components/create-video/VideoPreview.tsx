@@ -42,7 +42,7 @@ export default function VideoPreview({
             )}
           </div>
           <div className="flex justify-center gap-2">
-            <Button
+            {/* <Button
               onClick={onRegenerate}
               className="rounded-full gap-2 text-black"
               variant="outline"
@@ -50,7 +50,7 @@ export default function VideoPreview({
             >
               <RotateCcw className="h-4 w-4" />
               Regenerate
-            </Button>
+            </Button> */}
             {!isRawVideo && !isCaptioning && download && (
               <Button
                 asChild
