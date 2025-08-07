@@ -37,6 +37,7 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 // import { generateVoicePreview } from "@/app/actions/generateVoicePreview";
+import { fontMap } from "@/lib/fonts";
 
 export default function VideoFields({
   duration,
@@ -86,6 +87,26 @@ export default function VideoFields({
     { color: "white", dotColor: "white" },
     { color: "black", dotColor: "black" },
   ];
+
+  const baseColorClass = {
+    red: "text-red-400",
+    blue: "text-blue-400",
+    green: "text-green-400",
+    indigo: "text-indigo-400",
+    yellow: "text-yellow-400",
+    white: "text-white",
+    black: "text-black",
+  }[fontBaseColor as ColorName];
+
+  const highlightColorClass = {
+    red: "text-red-500",
+    blue: "text-blue-500",
+    green: "text-green-500",
+    indigo: "text-indigo-500",
+    yellow: "text-yellow-500",
+    white: "text-white",
+    black: "text-black",
+  }[fontHighlightColor as ColorName];
 
   // Display only first 3 voices or all voices based on state
   // const displayedVoices = showAllVoices ? voices : voices.slice(0, 2);
@@ -377,6 +398,15 @@ export default function VideoFields({
                 </PopoverContent>
               </Popover>
             </div>
+          </div>
+          <div className="text-center">
+            <h2 className="text-lg font-medium text-white mb-2">
+              Captions Preview
+            </h2>
+            <p className={`text-3xl ${baseColorClass} ${fontMap[fontName]}`}>
+              Hello welcome to{" "}
+              <span className={highlightColorClass}>AiGenReels</span>
+            </p>
           </div>
         </div>
         {error && <p className="text-sm text-red-500">{error}</p>}

@@ -5,10 +5,7 @@ import { AuthProvider } from "@/context/auth-context";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
-const poppins = Poppins({
-  weight: "400",
-  subsets: ["latin"],
-});
+const poppins = Poppins({ subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
   title: "AI Video Generator",
