@@ -7,6 +7,7 @@ import TextToVideoTab from "@/components/create-video/TextToVideoTab";
 // import { DurationOption, VoiceOption } from "@/types/video";
 import NarrationToVideoTab from "@/components/create-video/NarrationToVideoTab";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useVideo } from "@/context/video-context";
 
 export default function CreateVideoPage(): JSX.Element {
   // const [duration, setDuration] = useState<DurationOption>("30-45")
@@ -31,9 +32,16 @@ export default function CreateVideoPage(): JSX.Element {
   //   loading,
   //   setLoading
   // }
+  const { playableVideoUrl, currentProgress } = useVideo();
 
   return (
-    <div className="space-y-6 text-white w-full">
+    <div className="relative space-y-6 text-white w-full min-h-screen">
+      {/* Loading Percentage UI */}
+      {currentProgress !== 0 && currentProgress !== 100 && (
+        <div className="fixed top-4 right-4 bg-indigo-500 text-white px-4 py-2 rounded-xl shadow-lg z-50">
+          Generating video... {currentProgress}%
+        </div>
+      )}
       <div>
         <div className="flex items-center gap-2">
           <SidebarTrigger />
