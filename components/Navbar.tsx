@@ -146,7 +146,7 @@ const Navbar = () => {
                 className="font-medium w-full"
                 onClick={closeMenu}
               >
-                Create Video
+                Login
               </Button>
             </Link>
           </div>
