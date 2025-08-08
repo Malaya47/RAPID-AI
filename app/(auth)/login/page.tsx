@@ -66,7 +66,7 @@ export default function LoginPage() {
         <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent tracking-tight">
           <Typewriter
             words={["Welcome Back"]}
-            loop={0} // 0 = infinite
+            loop={5} // 0 = infinite
             cursor
             cursorStyle="|"
             typeSpeed={70}
