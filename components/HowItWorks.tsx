@@ -26,7 +26,7 @@ const steps = [
     number: 3,
     title: "Download & Get Notified",
     description:
-      "Effortlessly download your finished video.Once the video is processed, you'll receive a notification via email so you’re always informed. The entire experience is optimized for simplicity.",
+      "Effortlessly download your finished video. Once the video is processed, you'll receive a notification via email so you’re always informed. The entire experience is optimized for simplicity.",
     image:
       "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=800&q=80",
     alt: "Export video",
