@@ -44,11 +44,11 @@ const Hero = () => {
                     "Captivating Content",
                     "Stunning Visuals",
                   ]}
-                  loop={0} // 0 = infinite
+                  loop={4} // 0 = infinite
                   cursor
                   cursorStyle="|"
-                  typeSpeed={70}
-                  deleteSpeed={50}
+                  typeSpeed={80}
+                  deleteSpeed={80}
                   delaySpeed={1500}
                 />
               </div>
