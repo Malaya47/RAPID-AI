@@ -620,8 +620,7 @@ export default function TextToVideoTab({}: // duration,
               Warning
             </DialogTitle>
             <DialogDescription className="text-neutral-300 text-sm sm:text-base mt-2 leading-relaxed">
-              If you close the video processing now, you may lose your credits
-              and any progress made. Are you sure you want to proceed?
+              Are you sure you want to close the preview ?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="px-2 sm:px-4 pb-4 sm:pb-6 pt-2">

@@ -104,7 +104,7 @@ const Navbar = () => {
               {
                 <Link href="/login">
                   <Button className="font-medium bg-neutral-800 text-white">
-                    Create Video
+                    Login
                   </Button>
                 </Link>
               }

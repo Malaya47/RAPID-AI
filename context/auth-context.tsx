@@ -51,52 +51,91 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   //   }
   // }, [supabase])
 
-  useEffect(() => {
-    const getSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      setIsLoading(false);
-    };
 
-    getSession();
+ const ensureUserProfile = async (userId: string, email: string | undefined) => {
+  // Check if profile already exists
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", userId)
+    .single();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
+  if (error && error.code !== "PGRST116") {
+    console.error("Error checking user profile:", error.message);
+    return;
+  }
 
-      // After login, insert user into "profiles" table if not already there
-      if (session?.user) {
-        const userId = session.user.id;
-
-        const { data: existingProfile, error: checkError } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("id", userId)
-          .single();
-
-        if (!existingProfile && !checkError) {
-          const { error: insertError } = await supabase
-            .from("profiles")
-            .insert({
-              id: userId,
-              total_credits: 0,
-            });
-
-          if (insertError) {
-            console.error("Failed to insert profile:", insertError);
-          }
-        }
-      }
+  if (!data) {
+    const { error: insertError } = await supabase.from("profiles").insert({
+      id: userId,
+      email, // optional if your table includes it
+      total_credits: 0, // set default values here
     });
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+    if (insertError) {
+      console.error("Error inserting user profile:", insertError.message);
+    }
+  }
+};
+
+
+useEffect(() => {
+  const getSessionAndHandleProfile = async () => {
+    const { data } = await supabase.auth.getSession();
+    const session = data.session;
+
+    setSession(session);
+    setUser(session?.user ?? null);
+    setIsLoading(false);
+
+    if (session?.user) {
+      await ensureUserProfile(session.user.id, session.user.email);
+    }
+  };
+
+  getSessionAndHandleProfile();
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+    setUser(session?.user ?? null);
+    setIsLoading(false);
+
+    if (session?.user) {
+      ensureUserProfile(session.user.id, session.user.email);
+    }
+  });
+
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
+
+
+
+  // useEffect(() => {
+  //   const getSession = async () => {
+  //     const { data, error } = await supabase.auth.getSession();
+  //     setSession(data.session);
+  //     setUser(data.session?.user ?? null);
+  //     setIsLoading(false);
+  //   };
+
+  //   getSession();
+
+  //   const {
+  //     data: { subscription },
+  //   } = supabase.auth.onAuthStateChange((_event, session) => {
+  //     setSession(session);
+  //     setUser(session?.user ?? null);
+  //     setIsLoading(false);
+  //   });
+
+  //   return () => {
+  //     subscription.unsubscribe();
+  //   };
+  // }, []);
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -113,6 +152,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         redirectTo: `${window.location.origin}/dashboard`, // or your desired redirect
       },
     });
+
+    // Insert the new user into the profiles table first check if it exsists or not in the db
   };
 
   const signUp = async (email: string, password: string) => {
