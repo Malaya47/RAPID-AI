@@ -27,9 +27,9 @@ export default function VideoPreview({
     <div className="w-full flex flex-col items-center gap-4">
       {generated && videoUrl ? (
         <>
-          <div className="relative w-fit md:aspect-video rounded-3xl overflow-hidden border border--800 shadow-md shadow-indigo-500">
+          <div className="relative w-full max-w-[400px] aspect-[9/14] rounded-3xl overflow-hidden border border-neutral-800 shadow-md shadow-indigo-500">
             <video
-              className="w-full h-full object-"
+              className="w-full h-full object-cover"
               src={videoUrl}
               controls
               autoPlay
