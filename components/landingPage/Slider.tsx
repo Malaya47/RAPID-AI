@@ -119,7 +119,14 @@ export const BrandSlider: React.FC<BrandSliderProps> = ({
         {client.map((item, index) => (
           <div key={index} className="p-2 overflow-hidden rounded-2xl">
             <div className="w-fit mx-auto p-2 mb-5 shadow-md shadow-indigo-500 text-left rounded-2xl overflow-hidden">
-              <video className="h-96" autoPlay muted>
+              <video
+                className="h-96"
+                autoPlay
+                playsInline
+                webkit-playsinline="true"
+                muted
+                controls={false}
+              >
                 <source src={item.url} className="rounded-2xl" />
               </video>
             </div>
