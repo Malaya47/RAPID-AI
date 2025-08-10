@@ -51,68 +51,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   //   }
   // }, [supabase])
 
+  const ensureUserProfile = async (
+    userId: string,
+    email: string | undefined
+  ) => {
+    // Check if profile already exists
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", userId)
+      .single();
 
- const ensureUserProfile = async (userId: string, email: string | undefined) => {
-  // Check if profile already exists
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("id", userId)
-    .single();
+    if (error && error.code !== "PGRST116") {
+      console.error("Error checking user profile:", error.message);
+      return;
+    }
 
-  if (error && error.code !== "PGRST116") {
-    console.error("Error checking user profile:", error.message);
-    return;
-  }
+    if (!data) {
+      const { error: insertError } = await supabase.from("profiles").insert({
+        id: userId,
+        total_credits: 0, // set default values here
+      });
 
-  if (!data) {
-    const { error: insertError } = await supabase.from("profiles").insert({
-      id: userId,
-      email, // optional if your table includes it
-      total_credits: 0, // set default values here
+      if (insertError) {
+        console.error("Error inserting user profile:", insertError.message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const getSessionAndHandleProfile = async () => {
+      const { data } = await supabase.auth.getSession();
+      const session = data.session;
+
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsLoading(false);
+
+      if (session?.user) {
+        await ensureUserProfile(session.user.id, session.user.email);
+      }
+    };
+
+    getSessionAndHandleProfile();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsLoading(false);
+
+      if (session?.user) {
+        ensureUserProfile(session.user.id, session.user.email);
+      }
     });
 
-    if (insertError) {
-      console.error("Error inserting user profile:", insertError.message);
-    }
-  }
-};
-
-
-useEffect(() => {
-  const getSessionAndHandleProfile = async () => {
-    const { data } = await supabase.auth.getSession();
-    const session = data.session;
-
-    setSession(session);
-    setUser(session?.user ?? null);
-    setIsLoading(false);
-
-    if (session?.user) {
-      await ensureUserProfile(session.user.id, session.user.email);
-    }
-  };
-
-  getSessionAndHandleProfile();
-
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange((_event, session) => {
-    setSession(session);
-    setUser(session?.user ?? null);
-    setIsLoading(false);
-
-    if (session?.user) {
-      ensureUserProfile(session.user.id, session.user.email);
-    }
-  });
-
-  return () => {
-    subscription.unsubscribe();
-  };
-}, []);
-
-
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   // useEffect(() => {
   //   const getSession = async () => {
@@ -147,13 +145,11 @@ useEffect(() => {
 
   const signInWithOAuth = async (provider: "google") => {
     await supabase.auth.signInWithOAuth({
-      provider,
+      provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/dashboard`, // or your desired redirect
+        redirectTo: `${location.origin}/auth/callback`,
       },
     });
-
-    // Insert the new user into the profiles table first check if it exsists or not in the db
   };
 
   const signUp = async (email: string, password: string) => {
