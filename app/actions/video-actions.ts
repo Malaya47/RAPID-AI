@@ -10,29 +10,35 @@ interface JobStatusResponse {
   captioned_video_url?: string;
 }
 
-async function checkAndDeductCredits(userId: string): Promise<boolean> {
+export async function checkAndDeductCredits(userId: string): Promise<boolean> {
   const supabase = await createClient();
 
-  // Get user's current credits from the profiles table
-  const { data: profileData, error: profileError } = await supabase
-    .from("profiles")
-    .select("total_credits")
-    .eq("id", userId)
+  // 1. Get user's subscription credits
+  const { data: subscription, error: subscriptionError } = await supabase
+    .from("user_subscriptions")
+    .select("credits_remaining")
+    .eq("user_id", userId)
+    .eq("status", "active") // only active subscription
     .single();
 
-  if (profileError || !profileData) {
-    throw new Error("Failed to fetch user profile or credits");
+  if (subscriptionError || !subscription) {
+    throw new Error("Failed to fetch subscription or credits");
   }
 
-  if (profileData.total_credits < 1) {
+  // 2. Check if they have at least 1 credit
+  if (subscription.credits_remaining < 1) {
     throw new Error("Insufficient credits");
   }
 
-  // Deduct one credit from the profiles table
+  // 3. Deduct 1 credit
   const { error: updateError } = await supabase
-    .from("profiles")
-    .update({ total_credits: profileData.total_credits - 1 })
-    .eq("id", userId);
+    .from("user_subscriptions")
+    .update({
+      credits_remaining: subscription.credits_remaining - 1,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("user_id", userId)
+    .eq("status", "active");
 
   if (updateError) {
     throw new Error("Failed to deduct credits");
