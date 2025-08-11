@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 const poppins = Poppins({ subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
-  title: "AI Video Generator",
+  title: "AiGenReels",
   description: "Generate amazing videos with AI",
   generator: "v0.dev",
 };
