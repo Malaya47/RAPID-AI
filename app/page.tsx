@@ -1,19 +1,17 @@
-'use client';
+"use client";
 
-import FeatureCard from '@/components/FeatureCard';
-import TestimonialCard from '@/components/TestimonialCard';
-import PricingSection from '@/components/PricingSection';
-import Hero from '@/components/Hero';
-import HowItWorks from '@/components/HowItWorks';
-import Example from '@/components/Example';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import { easeInOut, motion } from 'framer-motion';
-import { FeatureData } from './data';
-
+import FeatureCard from "@/components/FeatureCard";
+import TestimonialCard from "@/components/TestimonialCard";
+import PricingSection from "@/components/PricingSection";
+import Hero from "@/components/Hero";
+import HowItWorks from "@/components/HowItWorks";
+import Example from "@/components/Example";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { easeInOut, motion } from "framer-motion";
+import { FeatureData } from "./data";
 
 export default function Home() {
-
   const containerVariants = {
     hidden: { y: 200, opacity: 0 },
     show: {
@@ -21,7 +19,7 @@ export default function Home() {
       y: 0,
       transition: {
         staggerChildren: 0.3, // Delay between children
-        duration: 0.6
+        duration: 0.6,
       },
     },
   };
@@ -56,7 +54,6 @@ export default function Home() {
     <>
       <Navbar />
       <div className="min-h-screen text-white bg-black">
-
         {/* Hero Section */}
         <Hero />
 
@@ -65,20 +62,21 @@ export default function Home() {
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
-          id="features" className="py-20 px-4 md:px-6 lg:px-8 overflow-hidden">
-
-          <motion.div
-            className="max-w-7xl mx-auto">
-            <motion.div
-              className="text-center mb-16">
+          id="features"
+          className="py-20 px-4 md:px-6 lg:px-8 overflow-hidden"
+        >
+          <motion.div className="max-w-7xl mx-auto">
+            <motion.div className="text-center mb-16">
               <motion.h2
                 variants={itemVariants}
-                className="max-w-xl rounded-3xl mx-auto text-3xl md:text-5xl font-extrabold mb-4 bggradient-to-r from-indigo-500  to-indigo-950">
+                className="max-w-xl rounded-3xl mx-auto text-3xl md:text-5xl font-extrabold mb-4 bggradient-to-r from-indigo-500  to-indigo-950"
+              >
                 Powerful Features
               </motion.h2>
 
               <p className="text-xl text-neutral-300 mx-auto">
-                Everything you need to create professional videos without design or video editing skills
+                Everything you need to create professional videos without design
+                or video editing skills
               </p>
             </motion.div>
 
@@ -86,22 +84,19 @@ export default function Home() {
               variants={featureVariants}
               initial="hidden"
               whileInView="show"
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10"
+            >
               {FeatureData.map((item, index) => {
                 return (
-                  <motion.div
-                    variants={featureItemVariants}
-                    key={index}
-                  >
+                  <motion.div variants={featureItemVariants} key={index}>
                     <FeatureCard
                       icon={item.icon}
                       title={item.title}
                       description={item.description}
                     />
                   </motion.div>
-                )
+                );
               })}
-
             </motion.div>
           </motion.div>
         </motion.section>
@@ -110,22 +105,24 @@ export default function Home() {
         <HowItWorks />
 
         {/* Examples Section */}
-        <Example />
+        {/* <Example /> */}
         {/* Testimonials Section */}
         <section className="py-20 px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <motion.div
-              variants={itemVariants}
-              className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Users Say</h2>
+            <motion.div variants={itemVariants} className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                What Our Users Say
+              </h2>
               <p className="text-xl text-neutral-300 max-w-2xl mx-auto">
-                Hear from content creators who have transformed their video production with VideoGen
+                Hear from content creators who have transformed their video
+                production with VideoGen
               </p>
             </motion.div>
 
             <motion.div
               variants={itemVariants}
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
               <TestimonialCard
                 quote="VideoGen has completely transformed my content creation workflow. What used to take days now takes minutes, and the quality is incredible!"
                 author="Sarah Johnson"
@@ -151,7 +148,7 @@ export default function Home() {
         {/* Pricing Section */}
         <section id="pricing" className="py-20 px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <PricingSection 
+            <PricingSection
               showModal={true}
               title="Simple, Transparent Pricing"
               subtitle="Choose the plan that works best for your video creation needs"
@@ -161,6 +158,5 @@ export default function Home() {
       </div>
       <Footer />
     </>
-
   );
 }
