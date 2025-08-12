@@ -95,12 +95,12 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
-  // 1️⃣ If trying to access dashboard but no session → redirect to login
+  //  If trying to access dashboard but no session → redirect to login
   if (pathname.startsWith("/dashboard") && !session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // 2️⃣ If trying to access login but already logged in → redirect to dashboard
+  //  If trying to access login but already logged in → redirect to dashboard
   if (pathname === "/login" && session) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
