@@ -24,7 +24,7 @@ type Video = Database["public"]["Tables"]["videos"]["Row"];
 export default function DashboardPage() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(3); // Load 6 videos per page
+  const [pageSize] = useState(3); // Load 3 videos per page
   const [hasMore, setHasMore] = useState(true);
   const [credits, setCredits] = useState<number>(0);
   const [subscription, setSubscription] = useState<UserSubscription | null>(
