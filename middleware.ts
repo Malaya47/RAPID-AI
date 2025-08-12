@@ -48,6 +48,39 @@
 
 // new code
 
+// import { NextResponse } from "next/server";
+// import type { NextRequest } from "next/server";
+// import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+
+// export async function middleware(request: NextRequest) {
+//   const res = NextResponse.next();
+//   const supabase = createMiddlewareClient({ req: request, res });
+
+//   const {
+//     data: { session },
+//     error,
+//   } = await supabase.auth.getSession();
+
+//   // If refresh token is invalid, clear cookies & redirect to login
+//   if (error?.message?.includes("refresh_token_not_found")) {
+//     res.cookies.delete("sb-access-token");
+//     res.cookies.delete("sb-refresh-token");
+//     return NextResponse.redirect(new URL("/login", request.url));
+//   }
+
+//   // If no session, redirect to login
+//   if (!session) {
+//     return NextResponse.redirect(new URL("/login", request.url));
+//   }
+
+//   return res;
+// }
+
+// // Middleware runs ONLY on dashboard routes
+// export const config = {
+//   matcher: ["/dashboard"],
+// };
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
@@ -58,25 +91,23 @@ export async function middleware(request: NextRequest) {
 
   const {
     data: { session },
-    error,
   } = await supabase.auth.getSession();
 
-  // If refresh token is invalid, clear cookies & redirect to login
-  if (error?.message?.includes("refresh_token_not_found")) {
-    res.cookies.delete("sb-access-token");
-    res.cookies.delete("sb-refresh-token");
+  const pathname = request.nextUrl.pathname;
+
+  // 1️⃣ If trying to access dashboard but no session → redirect to login
+  if (pathname.startsWith("/dashboard") && !session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // If no session, redirect to login
-  if (!session) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  // 2️⃣ If trying to access login but already logged in → redirect to dashboard
+  if (pathname === "/login" && session) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return res;
 }
 
-// Middleware runs ONLY on dashboard routes
 export const config = {
-  matcher: ["/dashboard"],
+  matcher: ["/dashboard/:path*", "/login"], // protect dashboard + handle login redirect
 };
