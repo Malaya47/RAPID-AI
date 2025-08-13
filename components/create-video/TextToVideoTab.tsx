@@ -299,6 +299,9 @@ export default function TextToVideoTab({}: // duration,
   const confirmNarrationClose = () => {
     setShowNarrationEditor(false);
     setShowNarrationWarning(false);
+    setPrompt("");
+    setNarration("");
+    setScript(null);
   };
 
   const handlePreviewDrawerClose = (open: boolean) => {
