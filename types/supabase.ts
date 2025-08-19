@@ -20,6 +20,7 @@ export interface Database {
           updated_at: string;
           name: string | null;
           total_credits: number;
+          stripe_customer_id: string | null;
         };
         Insert: {
           id: string;

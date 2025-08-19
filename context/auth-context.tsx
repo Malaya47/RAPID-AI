@@ -225,6 +225,7 @@ type AuthContextType = {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
+  profile: any;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -239,9 +240,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [profile, setProfile] = useState(null);
 
   // Ensure persistSession = true so tokens refresh automatically
   const supabase = createClient();
+
+  // Fetch profile after login
+  const fetchProfile = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
+    if (!error) setProfile(data);
+    else setProfile(null);
+  };
 
   const ensureUserProfile = async (userId: string, email?: string) => {
     const { data, error } = await supabase
@@ -278,6 +291,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data.session?.user) {
         ensureUserProfile(data.session.user.id, data.session.user.email);
+        fetchProfile(data.session.user.id);
       }
     });
 
@@ -355,6 +369,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         session,
         isLoading,
+        profile,
         signIn,
         signUp,
         signOut,
