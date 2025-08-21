@@ -35,27 +35,44 @@ export default function DashboardPage() {
   const supabase = createClient();
   const subscriptionService = new SubscriptionService();
 
+  // const fetchVideos = async (page: number) => {
+  //   const {
+  //     data: { user },
+  //   } = await supabase.auth.getUser();
+
+  //   if (!user) return;
+
+  //   const from = (page - 1) * pageSize;
+  //   const to = from + pageSize - 1;
+
+  //   const { data: videosData, error } = await supabase
+  //     .from("videos")
+  //     .select("*")
+  //     .eq("user_id", user.id)
+  //     .order("created_at", { ascending: false })
+  //     .range(from, to);
+
+  //   if (error) throw error;
+
+  //   if (videosData.length < pageSize) {
+  //     setHasMore(false); // No more videos to load
+  //   }
+
+  //   setVideos((prev) => {
+  //     const existingIds = new Set(prev.map((v) => v.id));
+  //     const newVideos = videosData.filter((v) => !existingIds.has(v.id));
+  //     return [...prev, ...newVideos];
+  //   });
+  // };
+
   const fetchVideos = async (page: number) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const res = await fetch(`/api/videos?page=${page}&pageSize=${pageSize}`);
+    if (!res.ok) throw new Error("Failed to fetch videos");
 
-    if (!user) return;
-
-    const from = (page - 1) * pageSize;
-    const to = from + pageSize - 1;
-
-    const { data: videosData, error } = await supabase
-      .from("videos")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .range(from, to);
-
-    if (error) throw error;
+    const videosData: Video[] = await res.json();
 
     if (videosData.length < pageSize) {
-      setHasMore(false); // No more videos to load
+      setHasMore(false);
     }
 
     setVideos((prev) => {
