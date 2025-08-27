@@ -81,50 +81,89 @@
 //   matcher: ["/dashboard"],
 // };
 
+// import { NextResponse } from "next/server";
+// import type { NextRequest } from "next/server";
+// import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+// import type { Database } from "@/types/supabase";
+
+// export async function middleware(request: NextRequest) {
+//   const pathname = request.nextUrl.pathname;
+//   const res = NextResponse.next();
+
+//   const isCallback = pathname.startsWith("/auth/callback");
+
+//   // 1️⃣ On /auth/callback → always check session
+//   if (isCallback) {
+//     const supabase = createMiddlewareClient<Database>({ req: request, res });
+//     const {
+//       data: { session },
+//     } = await supabase.auth.getSession();
+
+//     // Redirect to dashboard or where they came from
+//     if (session) {
+//       return NextResponse.redirect(new URL("/dashboard", request.url));
+//     }
+//     return res;
+//   }
+
+//   // 2️⃣ On /dashboard with NO sb-access-token cookie → run getSession() once
+//   const hasAccessToken = request.cookies.has("sb-access-token");
+//   if (pathname.startsWith("/dashboard") && !hasAccessToken) {
+//     const supabase = createMiddlewareClient<Database>({ req: request, res });
+//     const {
+//       data: { session },
+//     } = await supabase.auth.getSession();
+//     if (!session) {
+//       return NextResponse.redirect(new URL("/login", request.url));
+//     }
+//     return res; // Allow dashboard if session exists
+//   }
+
+//   // 3️⃣ Normal fast checks for /dashboard and /login
+//   if (pathname.startsWith("/dashboard") && !hasAccessToken) {
+//     return NextResponse.redirect(new URL("/login", request.url));
+//   }
+
+//   if (pathname === "/login" && hasAccessToken) {
+//     return NextResponse.redirect(new URL("/dashboard", request.url));
+//   }
+
+//   return res;
+// }
+
+// export const config = {
+//   matcher: ["/dashboard/:path*", "/login", "/auth/callback"],
+// };
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import type { Database } from "@/types/supabase";
 
 export async function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-  const res = NextResponse.next();
+  const { pathname } = request.nextUrl;
+  let res = NextResponse.next();
 
-  const isCallback = pathname.startsWith("/auth/callback");
+  const supabase = createMiddlewareClient<Database>({ req: request, res });
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  // 1️⃣ On /auth/callback → always check session
-  if (isCallback) {
-    const supabase = createMiddlewareClient<Database>({ req: request, res });
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    // Redirect to dashboard or where they came from
+  // 1️ Auth callback → redirect if logged in
+  if (pathname.startsWith("/auth/callback")) {
     if (session) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
     return res;
   }
 
-  // 2️⃣ On /dashboard with NO sb-access-token cookie → run getSession() once
-  const hasAccessToken = request.cookies.has("sb-access-token");
-  if (pathname.startsWith("/dashboard") && !hasAccessToken) {
-    const supabase = createMiddlewareClient<Database>({ req: request, res });
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    return res; // Allow dashboard if session exists
-  }
-
-  // 3️⃣ Normal fast checks for /dashboard and /login
-  if (pathname.startsWith("/dashboard") && !hasAccessToken) {
+  // 2️ Dashboard → must be logged in
+  if (pathname.startsWith("/dashboard") && !session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (pathname === "/login" && hasAccessToken) {
+  // 3️ Login → redirect if already logged in
+  if (pathname === "/login" && session) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
