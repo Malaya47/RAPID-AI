@@ -8,6 +8,13 @@ import TextToVideoTab from "@/components/create-video/TextToVideoTab";
 import NarrationToVideoTab from "@/components/create-video/NarrationToVideoTab";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useVideo } from "@/context/video-context";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function CreateVideoPage(): JSX.Element {
   // const [duration, setDuration] = useState<DurationOption>("30-45")
@@ -32,7 +39,7 @@ export default function CreateVideoPage(): JSX.Element {
   //   loading,
   //   setLoading
   // }
-  const { playableVideoUrl, currentProgress } = useVideo();
+  const { playableVideoUrl, currentProgress, setLanguage } = useVideo();
 
   return (
     <div className="relative space-y-6 text-white w-full min-h-screen">
@@ -67,6 +74,25 @@ export default function CreateVideoPage(): JSX.Element {
             Own Script
           </TabsTrigger>
         </TabsList>
+        {/* Language Selector */}
+        <div className="mt-5 w-40">
+          <Select
+            defaultValue="English"
+            // onValueChange={(value) => setLanguage(value)} // capture value here
+            onValueChange={(value) => {
+              setLanguage(value);
+            }}
+          >
+            <SelectTrigger className="rounded-3xl bg-neutral-800 text-white">
+              <SelectValue placeholder="Select language" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="English">English</SelectItem>
+              <SelectItem value="hindi">Hindi</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <TabsContent value="text-to-video" className="mt-4">
           {/* <TextToVideoTab {...sharedProps} /> */}
           <TextToVideoTab />
