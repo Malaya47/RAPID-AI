@@ -81,8 +81,7 @@ export default function VideoFields({
 
   const hindiFonts: FontName[] = [
     "NotoSansDevanagari",
-    "abc",
-    "gggg",
+
     // ✅ add more Hindi fonts later here
   ];
 
