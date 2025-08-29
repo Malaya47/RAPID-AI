@@ -24,6 +24,9 @@ interface VideoState {
   duration: string;
   voice: string;
 
+  // Language Selection
+  language: string;
+
   // Video URLs and Status
   videoUrl: string;
   playableVideoUrl: string;
@@ -67,6 +70,7 @@ interface VideoContextType extends VideoState {
   setScript: (script: any) => void;
   setDuration: (duration: number) => void;
   setVoice: (voice: string) => void;
+  setLanguage: (language: string) => void;
   setVideoUrl: (url: string) => void;
   setPlayableVideoUrl: (url: string) => void;
   setIsRawVideo: (isRaw: boolean) => void;
@@ -98,6 +102,23 @@ interface VideoContextType extends VideoState {
 
 const VideoContext = createContext<VideoContextType | undefined>(undefined);
 
+const languageFontDefaults: Record<string, FontName[]> = {
+  English: [
+    "Anton",
+    "Bangers",
+    "BebasNeue",
+    "Impact",
+    "Knewave",
+    "LeagueSpartan",
+    "Montserrat",
+    "PoetsenOne",
+    "Poppins",
+  ],
+  hindi: ["NotoSansDevanagari"],
+};
+
+const initialLanguage = "English";
+
 // Initial state
 const initialVideoState: VideoState = {
   prompt: "",
@@ -105,6 +126,7 @@ const initialVideoState: VideoState = {
   script: null,
   duration: "30",
   voice: "alloy",
+  language: initialLanguage,
   videoUrl: "",
   playableVideoUrl: "",
   isRawVideo: false,
@@ -121,7 +143,7 @@ const initialVideoState: VideoState = {
   showPreviewDrawer: false,
   showNarrationWarning: false,
   showPreviewWarning: false,
-  fontName: "Anton",
+  fontName: languageFontDefaults[initialLanguage][0], // Default tied to language
   fontBaseColor: "white",
   fontHighlightColor: "indigo",
   currentJobId: "",
@@ -429,6 +451,12 @@ export function VideoProvider({ children }: VideoProviderProps) {
   const setDuration = (duration: number) =>
     setState((prev) => ({ ...prev, duration: duration.toString() }));
   const setVoice = (voice: string) => setState((prev) => ({ ...prev, voice }));
+  const setLanguage = (language: string) =>
+    setState((prev) => ({
+      ...prev,
+      language,
+      fontName: languageFontDefaults[language]?.[0] ?? prev.fontName,
+    }));
   const setVideoUrl = (videoUrl: string) =>
     setState((prev) => ({ ...prev, videoUrl }));
   const setPlayableVideoUrl = (playableVideoUrl: string) =>
@@ -514,6 +542,7 @@ export function VideoProvider({ children }: VideoProviderProps) {
     setScript,
     setDuration,
     setVoice,
+    setLanguage,
     setVideoUrl,
     setPlayableVideoUrl,
     setIsRawVideo,

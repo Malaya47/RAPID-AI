@@ -51,7 +51,8 @@ export type FontName =
   | "LeagueSpartan"
   | "Montserrat"
   | "PoetsenOne"
-  | "Poppins";
+  | "Poppins"
+  | "NotoSansDevanagari";
 export type ColorName =
   | "red"
   | "blue"

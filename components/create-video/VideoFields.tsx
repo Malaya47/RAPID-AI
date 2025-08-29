@@ -43,6 +43,7 @@ export default function VideoFields({
   duration,
   setDuration,
   voice,
+  language,
   setVoice,
   error,
   fontName,
@@ -66,7 +67,7 @@ export default function VideoFields({
   const [openBaseFont, setOpenBaseFont] = useState(false);
   const [highlightOpen, setHighlightOpen] = useState(false);
 
-  const fonts: FontName[] = [
+  const englishFonts: FontName[] = [
     "Anton",
     "Bangers",
     "BebasNeue",
@@ -77,6 +78,16 @@ export default function VideoFields({
     "PoetsenOne",
     "Poppins",
   ];
+
+  const hindiFonts: FontName[] = [
+    "NotoSansDevanagari",
+    "abc",
+    "gggg",
+    // ✅ add more Hindi fonts later here
+  ];
+
+  // Then decide based on language
+  const fonts = language === "hindi" ? hindiFonts : englishFonts;
 
   const colors = [
     { color: "red", dotColor: "red-500" },
@@ -399,13 +410,27 @@ export default function VideoFields({
               </Popover>
             </div>
           </div>
+          {/* Captions Preview */}
           <div className="text-center">
             <h2 className="text-lg font-medium text-white mb-2">
               Captions Preview
             </h2>
-            <p className={`text-3xl ${baseColorClass} ${fontMap[fontName]}`}>
-              Hello welcome to{" "}
-              <span className={highlightColorClass}>AiGenReels</span>
+            <p
+              className={`text-3xl ${baseColorClass} ${
+                fontMap[fontName] // ✅ applies font from dropdown (English or Hindi)
+              }`}
+            >
+              {language === "hindi" ? (
+                <>
+                  नमस्ते स्वागत है{" "}
+                  <span className={highlightColorClass}>AiGenReels</span>
+                </>
+              ) : (
+                <>
+                  Hello welcome to{" "}
+                  <span className={highlightColorClass}>AiGenReels</span>
+                </>
+              )}
             </p>
           </div>
         </div>

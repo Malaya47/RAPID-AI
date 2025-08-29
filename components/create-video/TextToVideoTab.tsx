@@ -64,6 +64,7 @@ export default function TextToVideoTab({}: // duration,
     script,
     duration,
     voice,
+    language,
     generated,
     error,
     loading,
@@ -146,7 +147,7 @@ export default function TextToVideoTab({}: // duration,
     setGenerated(false);
 
     try {
-      const narrationData = await generateNarration(prompt, duration);
+      const narrationData = await generateNarration(prompt, duration, language);
       setScript(narrationData);
       setNarration(narrationData.script);
       setShowNarrationEditor(true);
@@ -221,6 +222,7 @@ export default function TextToVideoTab({}: // duration,
       const jobId = await generateVideo(
         updatedScript,
         voice,
+        language,
         duration,
         user.id,
         fontName,
@@ -349,6 +351,7 @@ export default function TextToVideoTab({}: // duration,
             duration={duration}
             setDuration={setDuration}
             voice={voice}
+            language={language}
             setVoice={setVoice}
             error={error}
             onSubmit={handleGenerateNarration}

@@ -111,7 +111,8 @@ export async function storeVideoInSupabase({
 
 export async function generateNarration(
   scriptPrompt: string,
-  timeLimit: string
+  timeLimit: string,
+  language: string
 ): Promise<any> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_RAILWAY_API_KEY}/generate-narration/`,
@@ -123,6 +124,7 @@ export async function generateNarration(
       body: JSON.stringify({
         script_prompt: scriptPrompt,
         time_limit: timeLimit,
+        ...(language === "hindi" && { language }),
         user_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       }),
     }
@@ -171,6 +173,7 @@ export async function generateViralNarration(
 export async function generateVideo(
   narrationData: any,
   voice: string,
+  language: string,
   timeLimit: string,
   userId: string,
   fontName: string,
@@ -187,9 +190,13 @@ export async function generateVideo(
       body: JSON.stringify({
         script_prompt: narrationData,
         voice: voice,
+        ...(language === "hindi" && { language }),
         time_limit: timeLimit,
         user_id: userId,
-        font_name: `${fontName}-Regular.ttf`,
+        font_name:
+          language === "hindi"
+            ? `${fontName}-VariableFont.ttf`
+            : `${fontName}-Regular.ttf`,
         base_font_color: baseFontColor,
         highlight_word_color: highlightWordColor,
       }),
