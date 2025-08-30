@@ -297,7 +297,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // This will automatically handle token refreshes under the hood
     const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setIsLoading(false);
@@ -305,6 +305,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (session?.user) {
           ensureUserProfile(session.user.id, session.user.email);
         }
+        //  Sync to Next.js server (important for middleware)
+        await fetch("/api/auth/set-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ event, session }),
+        });
       }
     );
 

@@ -147,7 +147,14 @@ export async function middleware(request: NextRequest) {
   const supabase = createMiddlewareClient<Database>({ req: request, res });
   const {
     data: { session },
+    error,
   } = await supabase.auth.getSession();
+
+  // If refresh fails, clear cookies immediately
+  if (error) {
+    console.error("Supabase session refresh failed:", error.message);
+    await supabase.auth.signOut(); //  clears bad cookies
+  }
 
   // 1️ Auth callback → redirect if logged in
   if (pathname.startsWith("/auth/callback")) {
