@@ -306,7 +306,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           ensureUserProfile(session.user.id, session.user.email);
         }
         //  Sync to Next.js server (important for middleware)
-        await fetch("/app/api/auth/set-session", {
+        await fetch("/auth/set-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ event, session }),
