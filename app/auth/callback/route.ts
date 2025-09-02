@@ -17,7 +17,12 @@ export async function GET(request: Request) {
   }
 
   if (code) {
-    const supabase = createRouteHandlerClient({ cookies });
+    // ✅ Await cookies() before passing to Supabase client
+    const cookieStore = await cookies();
+    const supabase = createRouteHandlerClient({
+      cookies: () => cookieStore,
+    });
+
     // exchange the code for a session (PKCE exchange)
     await supabase.auth.exchangeCodeForSession(code);
   }
