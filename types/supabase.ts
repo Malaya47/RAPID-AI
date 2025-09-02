@@ -6,7 +6,13 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-export type SubscriptionStatus = "active" | "cancelled" | "expired";
+export type SubscriptionStatus =
+  | "active"
+  | "cancelled"
+  | "expired"
+  | "pending"
+  | "past_due";
+
 export type TransactionType = "credit" | "debit";
 export type VideoStatus = "processing" | "completed" | "failed";
 
