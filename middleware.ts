@@ -135,46 +135,142 @@
 //   matcher: ["/dashboard/:path*", "/login", "/auth/callback"],
 // };
 
+// import { NextResponse } from "next/server";
+// import type { NextRequest } from "next/server";
+// import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+// import type { Database } from "@/types/supabase";
+
+// export async function middleware(request: NextRequest) {
+//   const { pathname } = request.nextUrl;
+//   let res = NextResponse.next();
+
+//   const supabase = createMiddlewareClient<Database>({ req: request, res });
+//   const {
+//     data: { session },
+//     error,
+//   } = await supabase.auth.getSession();
+
+//   // If refresh fails, clear cookies immediately
+//   if (error) {
+//     console.error("Supabase session refresh failed:", error.message);
+//     await supabase.auth.signOut(); //  clears bad cookies
+//   }
+
+//   // 1️ Auth callback → redirect if logged in
+//   if (pathname.startsWith("/auth/callback")) {
+//     if (session) {
+//       return NextResponse.redirect(new URL("/dashboard", request.url));
+//     }
+//     return res;
+//   }
+
+//   // 2️ Dashboard → must be logged in
+//   if (pathname.startsWith("/dashboard") && !session) {
+//     return NextResponse.redirect(new URL("/login", request.url));
+//   }
+
+//   // 3️ Login → redirect if already logged in
+//   if (pathname === "/login" && session) {
+//     return NextResponse.redirect(new URL("/dashboard", request.url));
+//   }
+
+//   return res;
+// }
+
+// export const config = {
+//   matcher: ["/dashboard/:path*", "/login", "/auth/callback"],
+// };
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import type { Database } from "@/types/supabase";
 
+const COOLDOWN_PERIOD = 10_000; // 10 seconds
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   let res = NextResponse.next();
 
-  const supabase = createMiddlewareClient<Database>({ req: request, res });
-  const {
-    data: { session },
-    error,
-  } = await supabase.auth.getSession();
+  // Read cooldown cookie (per user/session)
+  const lastFailureCookie = request.cookies.get("lastFailure")?.value;
+  const lastFailureTime = lastFailureCookie ? parseInt(lastFailureCookie) : 0;
+  const now = Date.now();
 
-  // If refresh fails, clear cookies immediately
-  if (error) {
-    console.error("Supabase session refresh failed:", error.message);
-    await supabase.auth.signOut(); //  clears bad cookies
-  }
-
-  // 1️ Auth callback → redirect if logged in
-  if (pathname.startsWith("/auth/callback")) {
-    if (session) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+  // If still in cooldown, skip refresh
+  if (now - lastFailureTime < COOLDOWN_PERIOD && lastFailureTime > 0) {
+    if (pathname.startsWith("/dashboard")) {
+      return NextResponse.redirect(new URL("/login", request.url));
     }
     return res;
   }
 
-  // 2️ Dashboard → must be logged in
-  if (pathname.startsWith("/dashboard") && !session) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
+  try {
+    const supabase = createMiddlewareClient<Database>({ req: request, res });
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
 
-  // 3️ Login → redirect if already logged in
-  if (pathname === "/login" && session) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
+    if (error) {
+      console.error("Supabase session refresh failed:", error.message);
 
-  return res;
+      // Store failure time in a cookie (scoped to this user/session)
+      res.cookies.set("lastFailure", now.toString(), {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+        maxAge: COOLDOWN_PERIOD / 1000, // expire after cooldown
+      });
+
+      await supabase.auth.signOut();
+
+      if (pathname.startsWith("/dashboard")) {
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
+      return res;
+    }
+
+    // Success → clear cooldown cookie
+    res.cookies.delete("lastFailure");
+
+    // 1️ Auth callback → redirect if logged in
+    if (pathname.startsWith("/auth/callback")) {
+      if (session) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+      return res;
+    }
+
+    // 2️ Dashboard → must be logged in
+    if (pathname.startsWith("/dashboard") && !session) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    // 3️ Login → redirect if already logged in
+    if (pathname === "/login" && session) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+
+    return res;
+  } catch (e) {
+    console.error("Unexpected error in middleware:", e);
+
+    // Set cooldown on unexpected errors too
+    res.cookies.set("lastFailure", Date.now().toString(), {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: COOLDOWN_PERIOD / 1000,
+    });
+
+    if (pathname.startsWith("/dashboard")) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    return res;
+  }
 }
 
 export const config = {
