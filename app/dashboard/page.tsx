@@ -66,7 +66,9 @@ export default function DashboardPage() {
   // };
 
   const fetchVideos = async (page: number) => {
-    const res = await fetch(`/api/videos?page=${page}&pageSize=${pageSize}`);
+    const res = await fetch(`/api/videos?page=${page}&pageSize=${pageSize}`, {
+      credentials: "include",
+    });
     if (!res.ok) throw new Error("Failed to fetch videos");
 
     const videosData: Video[] = await res.json();
