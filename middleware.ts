@@ -186,18 +186,17 @@ import type { NextRequest } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import type { Database } from "@/types/supabase";
 
-const COOLDOWN_PERIOD = 10_000; // 10 seconds
+const COOLDOWN_PERIOD = 10_000; // 10s
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   let res = NextResponse.next();
 
-  // Read cooldown cookie (per user/session)
   const lastFailureCookie = request.cookies.get("lastFailure")?.value;
   const lastFailureTime = lastFailureCookie ? parseInt(lastFailureCookie) : 0;
   const now = Date.now();
 
-  // If still in cooldown, skip refresh
+  // ⛔ If in cooldown → skip refresh entirely
   if (now - lastFailureTime < COOLDOWN_PERIOD && lastFailureTime > 0) {
     if (pathname.startsWith("/dashboard")) {
       return NextResponse.redirect(new URL("/login", request.url));
@@ -207,24 +206,24 @@ export async function middleware(request: NextRequest) {
 
   try {
     const supabase = createMiddlewareClient<Database>({ req: request, res });
+
+    // ⚡ Instead of always refreshing, just check if a session exists
     const {
       data: { session },
       error,
     } = await supabase.auth.getSession();
 
     if (error) {
-      console.error("Supabase session refresh failed:", error.message);
+      console.error("Supabase session fetch failed:", error.message);
 
-      // Store failure time in a cookie (scoped to this user/session)
+      // store cooldown cookie
       res.cookies.set("lastFailure", now.toString(), {
         httpOnly: true,
         secure: true,
         sameSite: "lax",
         path: "/",
-        maxAge: COOLDOWN_PERIOD / 1000, // expire after cooldown
+        maxAge: COOLDOWN_PERIOD / 1000,
       });
-
-      await supabase.auth.signOut();
 
       if (pathname.startsWith("/dashboard")) {
         return NextResponse.redirect(new URL("/login", request.url));
@@ -232,15 +231,24 @@ export async function middleware(request: NextRequest) {
       return res;
     }
 
-    // Success → clear cooldown cookie
-    res.cookies.delete("lastFailure");
+    // ✅ If session exists, don’t refresh unless close to expiry
+    if (session) {
+      const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
+      const timeLeft = expiresAt - now;
+
+      // only refresh if < 5 minutes left
+      if (timeLeft < 5 * 60 * 1000) {
+        try {
+          await supabase.auth.refreshSession();
+        } catch (refreshError) {
+          console.error("Session refresh failed:", refreshError);
+        }
+      }
+    }
 
     // 1️ Auth callback → redirect if logged in
-    if (pathname.startsWith("/auth/callback")) {
-      if (session) {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
-      }
-      return res;
+    if (pathname.startsWith("/auth/callback") && session) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 
     // 2️ Dashboard → must be logged in
@@ -257,7 +265,6 @@ export async function middleware(request: NextRequest) {
   } catch (e) {
     console.error("Unexpected error in middleware:", e);
 
-    // Set cooldown on unexpected errors too
     res.cookies.set("lastFailure", Date.now().toString(), {
       httpOnly: true,
       secure: true,

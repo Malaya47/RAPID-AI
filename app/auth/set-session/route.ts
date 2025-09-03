@@ -9,10 +9,16 @@ export async function POST(req: Request) {
   const supabase = createRouteHandlerClient<Database>({
     cookies: () => cookieStore,
   });
-
   const { event, session } = await req.json();
 
-  if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+  if (event === "SIGNED_IN") {
+    // New login → set session once
+    await supabase.auth.setSession(session);
+  }
+
+  if (event === "TOKEN_REFRESHED") {
+    // 🔥 Already handled by supabase-js automatically, skip double refresh
+    // But keep session cookie in sync
     await supabase.auth.setSession(session);
   }
 
