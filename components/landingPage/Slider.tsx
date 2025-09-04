@@ -84,32 +84,32 @@ export const BrandSlider: React.FC<BrandSliderProps> = ({
 
   const client = [
     {
-      title: "SaaS Development",
-      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470725/gtavicecity_b8ofgb.mp4",
+      title: "Bruce lee",
+      url: "/videos/brucelee.mp4",
     },
     {
-      title: "SaaS Development",
-      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470697/hitlr_viral_ngrbim.mp4",
+      title: "Engineering",
+      url: `/videos/engineering.mp4`,
     },
     {
-      title: "SaaS Development",
-      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470691/russian_revolution_jqcjtz.mp4",
+      title: "Father role",
+      url: "/videos/father_role.mp4",
     },
     {
-      title: "SaaS Development",
-      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470655/engineering_xusghx.mp4",
+      title: "Goku",
+      url: "/videos/goku.mp4",
     },
     {
-      title: "SaaS Development",
-      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470631/thermodynamics_g7fxxu.mp4",
+      title: "Russian revolution",
+      url: "/videos/russian_revolution.mp4",
     },
     {
-      title: "SaaS Development",
-      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470610/tekken_wa25j5.mp4",
+      title: "Space",
+      url: "/videos/space.mp4",
     },
     {
-      title: "SaaS Development",
-      url: "https://res.cloudinary.com/dk5j69wyw/video/upload/v1754470598/dragonball_j4x85u.mp4",
+      title: "Thermodynamics",
+      url: "/videos/thermodynamics.mp4",
     },
   ];
 

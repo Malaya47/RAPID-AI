@@ -425,7 +425,9 @@ export default function TextToVideoTab({}: // duration,
           </div>
         )}
 
-        <div>{/* <Example /> */}</div>
+        <div>
+          <Example />
+        </div>
       </div>
 
       {/* Narration Editor Dialog - Enhanced Responsive */}
