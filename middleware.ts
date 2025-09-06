@@ -181,6 +181,109 @@
 //   matcher: ["/dashboard/:path*", "/login", "/auth/callback"],
 // };
 
+// import { NextResponse } from "next/server";
+// import type { NextRequest } from "next/server";
+// import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+// import type { Database } from "@/types/supabase";
+
+// const COOLDOWN_PERIOD = 10_000; // 10s
+
+// export async function middleware(request: NextRequest) {
+//   const { pathname } = request.nextUrl;
+//   let res = NextResponse.next();
+
+//   const lastFailureCookie = request.cookies.get("lastFailure")?.value;
+//   const lastFailureTime = lastFailureCookie ? parseInt(lastFailureCookie) : 0;
+//   const now = Date.now();
+
+//   // ⛔ If in cooldown → skip refresh entirely
+//   if (now - lastFailureTime < COOLDOWN_PERIOD && lastFailureTime > 0) {
+//     if (pathname.startsWith("/dashboard")) {
+//       return NextResponse.redirect(new URL("/login", request.url));
+//     }
+//     return res;
+//   }
+
+//   try {
+//     const supabase = createMiddlewareClient<Database>({ req: request, res });
+
+//     // ⚡ Instead of always refreshing, just check if a session exists
+//     const {
+//       data: { session },
+//       error,
+//     } = await supabase.auth.getSession();
+
+//     if (error) {
+//       console.error("Supabase session fetch failed:", error.message);
+
+//       // store cooldown cookie
+//       res.cookies.set("lastFailure", now.toString(), {
+//         httpOnly: true,
+//         secure: true,
+//         sameSite: "lax",
+//         path: "/",
+//         maxAge: COOLDOWN_PERIOD / 1000,
+//       });
+
+//       if (pathname.startsWith("/dashboard")) {
+//         return NextResponse.redirect(new URL("/login", request.url));
+//       }
+//       return res;
+//     }
+
+//     // ✅ If session exists, don’t refresh unless close to expiry
+//     if (session) {
+//       const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
+//       const timeLeft = expiresAt - now;
+
+//       // only refresh if < 5 minutes left
+//       if (timeLeft < 5 * 60 * 1000) {
+//         try {
+//           await supabase.auth.refreshSession();
+//         } catch (refreshError) {
+//           console.error("Session refresh failed:", refreshError);
+//         }
+//       }
+//     }
+
+//     // 1️ Auth callback → redirect if logged in
+//     if (pathname.startsWith("/auth/callback") && session) {
+//       return NextResponse.redirect(new URL("/dashboard", request.url));
+//     }
+
+//     // 2️ Dashboard → must be logged in
+//     if (pathname.startsWith("/dashboard") && !session) {
+//       return NextResponse.redirect(new URL("/login", request.url));
+//     }
+
+//     // 3️ Login → redirect if already logged in
+//     if (pathname === "/login" && session) {
+//       return NextResponse.redirect(new URL("/dashboard", request.url));
+//     }
+
+//     return res;
+//   } catch (e) {
+//     console.error("Unexpected error in middleware:", e);
+
+//     res.cookies.set("lastFailure", Date.now().toString(), {
+//       httpOnly: true,
+//       secure: true,
+//       sameSite: "lax",
+//       path: "/",
+//       maxAge: COOLDOWN_PERIOD / 1000,
+//     });
+
+//     if (pathname.startsWith("/dashboard")) {
+//       return NextResponse.redirect(new URL("/login", request.url));
+//     }
+//     return res;
+//   }
+// }
+
+// export const config = {
+//   matcher: ["/dashboard/:path*", "/login", "/auth/callback"],
+// };
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
@@ -207,16 +310,42 @@ export async function middleware(request: NextRequest) {
   try {
     const supabase = createMiddlewareClient<Database>({ req: request, res });
 
-    // ⚡ Instead of always refreshing, just check if a session exists
+    // ⚡ Check for an existing session
     const {
       data: { session },
       error,
     } = await supabase.auth.getSession();
 
+    // 🚨 CORE FIX: Handle the specific "refresh_token_not_found" error
     if (error) {
       console.error("Supabase session fetch failed:", error.message);
 
-      // store cooldown cookie
+      // Check if the error is due to an invalid refresh token
+      if (error.message === "Refresh token not found") {
+        console.log("Invalid refresh token detected. Clearing auth cookies.");
+
+        // Clear the invalid Supabase auth cookies to break the loop
+        res.cookies.delete("sb-access-token");
+        res.cookies.delete("sb-refresh-token");
+
+        // Also set the cooldown cookie to prevent immediate retries
+        res.cookies.set("lastFailure", now.toString(), {
+          httpOnly: true,
+          secure: true,
+          sameSite: "lax",
+          path: "/",
+          maxAge: COOLDOWN_PERIOD / 1000,
+        });
+
+        // If the user was trying to access a protected page, redirect to login
+        if (pathname.startsWith("/dashboard")) {
+          return NextResponse.redirect(new URL("/login", request.url));
+        }
+        // For other pages, just return the response with cleared cookies
+        return res;
+      }
+
+      // For all other errors, just use the cooldown mechanism
       res.cookies.set("lastFailure", now.toString(), {
         httpOnly: true,
         secure: true,
@@ -242,6 +371,7 @@ export async function middleware(request: NextRequest) {
           await supabase.auth.refreshSession();
         } catch (refreshError) {
           console.error("Session refresh failed:", refreshError);
+          // Optionally handle specific errors here as well
         }
       }
     }
